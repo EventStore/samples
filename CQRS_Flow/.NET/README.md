@@ -1,6 +1,8 @@
-# E-Commerce sample of Event Sourcing with EvenStoreDB
+![Github Actions](https://github.com/EventStore/samples/actions/workflows/build.cqrs_flow.dotnet.yml/badge.svg?branch=main)
 
-Sample is showing the typical flow of the Event Sourcing app with [EventStoreDB](https://developers.eventstore.com).
+# CQRS flow of Event Sourcing with EvenStoreDB
+
+Sample is showing the typical flow of the Event Sourcing with [EventStoreDB](https://developers.eventstore.com) using CQRS. It uses E-Commerce shopping carts domain.
 
 ## Prerequisities
 
@@ -25,20 +27,20 @@ Sample is showing the typical flow of the Event Sourcing app with [EventStoreDB]
 ## Overview
 
 It uses:
-- CQRS with MediatR,
-- Stores events from Aggregate method results to EventStoreDB,
+- Provides the example of the [Aggregate](./Carts/Carts/Carts/Cart.cs),
+- Stores events to EventStoreDB,
 - Builds read models using [Subscription to `$all`](https://developers.eventstore.com/clients/grpc/subscribing-to-streams/#subscribing-to-all).
 - Read models are stored as [ElasticSearch](https://www.elastic.co/elasticsearch/) documents.
+- CQRS with MediatR,
 - App has Swagger and predefined [docker-compose](./docker/docker-compose.yml) to run and play with samples.
 
 ## Write Model
 
-- Most of the write model infrastructure was reused from other samples,
-- Added new project `Core.EventStoreDB` for specific EventStoreDB code,
-- Added [EventStoreDBRepository](./Core/Core.EventStoreDB/Repository/EventStoreDBRepository.cs) repository to load and store aggregate state,
-- Added separate [IProjection](./Core/Core/Projections/IProjection.cs) interface to handle the same way stream aggregation and materialised projections,
+- Provides the basic boilerplate together with Core projects,
+- [EventStoreDBRepository](./Core/Core.EventStoreDB/Repository/EventStoreDBRepository.cs) repository to load and store aggregate state,
+- [IProjection](./Core/Core/Projections/IProjection.cs) interface to handle the same way stream aggregation and materialised projections,
 - Thanks to that added dedicated [AggregateStream](./Core/Core.EventStoreDB/Events/AggregateStreamExtensions.cs#L12) method for stream aggregation
-- See [sample Aggregate](./Carts/Carts/Carts/Cart.cs)
+- See [sample Aggregate](./Carts/Carts/Carts/Cart.cs) and [base class](./Core/Core/Aggregates/Aggregate.cs)
 
 ## Read Model
 - Read models are rebuilt with eventual consistency using subscribe to all EventStoreDB feature,
@@ -55,8 +57,8 @@ It uses:
   - [API integration tests](./Carts/Carts.Api.Tests/Carts/InitializingCart/InitializeCartTests.cs)
 
 ## Other
-- Added [EventTypeMapper](./Core/Core/Events/EventTypeMapper.cs) class to allow both convention-based mapping (by the .NET type name) and custom to handle event versioning,
-- Added [StreamNameMapper](./Core/Core/Events/StreamNameMapper.cs) class for convention-based id (and optional tenant) mapping based on the stream type and module,
+- [EventTypeMapper](./Core/Core/Events/EventTypeMapper.cs) class to allow both convention-based mapping (by the .NET type name) and custom to handle event versioning,
+- [StreamNameMapper](./Core/Core/Events/StreamNameMapper.cs) class for convention-based id (and optional tenant) mapping based on the stream type and module,
 - IoC [registration helpers for EventStoreDB configuration](./Core/Core.EventStoreDB/Config.cs),
 
 
