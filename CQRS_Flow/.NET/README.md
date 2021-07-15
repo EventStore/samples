@@ -14,7 +14,7 @@ Sample is showing the typical flow of the Event Sourcing with [EventStoreDB](htt
 
 ## Running
 
-1. Go to [docker](./docker) and run: `docker-compose up`.
+1. Run: `docker-compose up`.
 2. Wait until all dockers got are downloaded and running.
 3. You should automatically get:
     - ElasticSearch running at http://localhost:9200
@@ -32,7 +32,7 @@ It uses:
 - Builds read models using [Subscription to `$all`](https://developers.eventstore.com/clients/grpc/subscribing-to-streams/#subscribing-to-all).
 - Read models are stored as [ElasticSearch](https://www.elastic.co/elasticsearch/) documents.
 - CQRS with MediatR,
-- App has Swagger and predefined [docker-compose](./docker/docker-compose.yml) to run and play with samples.
+- App has Swagger and predefined [docker-compose](./docker-compose.yml) to run and play with samples.
 
 ## Write Model
 
@@ -54,7 +54,7 @@ It uses:
   - [Aggregate unit tests](./Carts/Carts.Tests/Carts/InitializingCart/InitializeCartTests.cs)
   - [Command handler unit tests](./Carts/Carts.Tests/Carts/InitializingCart/InitializeCartCommandHandlerTests.cs)
 - Added sample of integration testing in [`Carts.Api.Tests`](./Carts/Carts.Api.Tests)
-  - [API integration tests](./Carts/Carts.Api.Tests/Carts/InitializingCart/InitializeCartTests.cs)
+  - [API acceptance tests](./Carts/Carts.Api.Tests/Carts/InitializingCart/InitializeCartTests.cs)
 
 ## Other
 - [EventTypeMapper](./Core/Core/Events/EventTypeMapper.cs) class to allow both convention-based mapping (by the .NET type name) and custom to handle event versioning,
