@@ -32,11 +32,16 @@ jobs:
             - name: Build
               run: dotnet build --configuration Release --no-restore
 
-            - name: Run unit tests
-              run: dotnet test --configuration Release --no-build --filter Category!=Acceptance
-              
-            - name: Run acceptance tests
-              run: dotnet test --configuration Release --no-build --filter Category=Acceptance
+            - name: Run tests
+              run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+         
+            - name: Publish test results
+              uses: dorny/test-reporter@v1
+              if: success() || failure()
+              with:
+                name: Tests Results
+                reporter: dotnet-trx
+                path: '**/test-results.trx'
             
             - name: Stop containers
               if: always()
