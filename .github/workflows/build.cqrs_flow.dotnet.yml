@@ -17,6 +17,9 @@ jobs:
         steps:
             - name: Check Out Repo
               uses: actions/checkout@v1
+              
+            - name: Start containers
+              run: docker-compose -f "docker-compose.yml" up -d
 
             - name: Setup .NET Core
               uses: actions/setup-dotnet@v1
@@ -30,4 +33,11 @@ jobs:
               run: dotnet build --configuration Release --no-restore
 
             - name: Run unit tests
-              run: dotnet test --configuration Release --no-build --filter Carts.Tests
+              run: dotnet test --configuration Release --no-build --filter Category!=Acceptance
+              
+            - name: Run acceptance tests
+              run: dotnet test --configuration Release --no-build --filter Category=Acceptance
+            
+            - name: Stop containers
+              if: always()
+              run: docker-compose -f "docker-compose.yml" down
