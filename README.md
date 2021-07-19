@@ -2,11 +2,7 @@
 
 [EventStoreDB](https://www.eventstore.com/) is an industrial-strength database technology used as the central data store for event-sourced systems. It is available open-source to run locally on most platforms or as SaaS through [Event Store Cloud](https://www.eventstore.com/event-store-cloud).
 
-This repository provides real-world, practical samples both for the [EventStoreDB](https://www.eventstore.com/) and clients SDK.
-
-Documentation for [EventStoreDB](https://www.eventstore.com/) can be found at: https://developers.eventstore.com/.
-
-We invite you to join our community discussion space at [Discuss](https://discuss.eventstore.com/).
+This repository provides samples demonstrating the functionalities of [EventStoreDB](https://www.eventstore.com/) and the client SDKs of EventStore and practical usage.
 
 ## Contributing
 
@@ -38,3 +34,7 @@ Check the `README.md` file in the specific sample folder for the detailed run in
 ## Support
 
 Information on commercial support can be found here: https://eventstore.com/support/.
+
+Documentation can be found here: https://developers.eventstore.com/
+
+We invite you to join our community discussion space at [Discuss](https://discuss.eventstore.com/).
