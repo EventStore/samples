@@ -11,7 +11,7 @@
 
 1. Make sure that you applied or answered all the feedback from the maintainers.
 2. We're trying to be as much responsive as we can, but if we didn't respond to you, feel free to ping us by tagging us in the Issue or Pull Request.
-3. Pull request will be merged when you get approvals from at least 2 of the maintainers (and no rejection from others). Pull request will be tagged with the target Marten version in which it will be released. We also label the Pull Requests with information about the type of change.
+3. Pull request will be merged when you get approvals from at least 2 of the maintainers (and no rejection from others). 
 
 ## Working with the Git
 
@@ -29,7 +29,7 @@ To contribute to EventStoreDB samples:
 
 ## Code style
 
-Coding rules are set up in the project files with `.editorconfig` or `.prettierrc.json`. Those files are supported by all popular IDE (e.g. Microsoft Visual Studio, Rider, Visual Studio Code). Unless you disabled it manually, it should be automatically applied after opening the solution. We also recommend turning automatic formatting on saving to have all the rules applied.
+Coding rules are set up in the project files to be automatically applied (e.g. with `.editorconfig` or `.prettierrc.json`). Unless you disabled it manually, it should be automatically applied by IDE after opening the project. We also recommend turning automatic formatting on saving to have all the rules applied.
 
 ## Licensing and legal rights
 

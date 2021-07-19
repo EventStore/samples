@@ -2,7 +2,7 @@
 
 # CQRS flow of Event Sourcing with EvenStoreDB
 
-Sample is showing the typical flow of the Event Sourcing with [EventStoreDB](https://developers.eventstore.com) using CQRS. It uses E-Commerce shopping carts domain.
+This sample is showing a  typical flow of the Event Sourcing pattern with [EventStoreDB](https://developers.eventstore.com) using CQRS. It uses E-Commerce shopping carts domain. 
 
 ## Prerequisities
 
@@ -70,4 +70,3 @@ It uses:
     - `docker-compose down -v` - to clean stopped dockers.
     - `docker ps` - for showing running dockers
     - `docker ps -a` - to show all dockers (also stopped)
-
