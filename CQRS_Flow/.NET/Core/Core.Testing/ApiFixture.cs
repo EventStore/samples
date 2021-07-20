@@ -42,19 +42,26 @@ namespace Core.Testing
 
         public virtual Task DisposeAsync() => Task.CompletedTask;
 
-        public async Task<HttpResponseMessage> Get(string path = "", int maxNumberOfRetries = 0, int retryIntervalInMs = 1000)
+        public async Task<HttpResponseMessage> Get(string path = "", int maxNumberOfRetries = 0,
+            int retryIntervalInMs = 1000, Func<HttpResponseMessage, ValueTask<bool>>? check = null)
         {
             HttpResponseMessage queryResponse;
             var retryCount = maxNumberOfRetries;
+
+            var doCheck = check ?? (response => new(response.StatusCode == HttpStatusCode.OK));
             do
             {
                 queryResponse = await Client.GetAsync(
                     $"{ApiUrl}/{path}"
                 );
 
-                if (queryResponse.StatusCode != HttpStatusCode.OK && retryCount > 0)
-                    Thread.Sleep(retryIntervalInMs);
-            } while (queryResponse.StatusCode != HttpStatusCode.OK && maxNumberOfRetries-- > 0);
+                if (retryCount == 0 || (await doCheck(queryResponse)))
+                    break;
+
+                await Task.Delay(retryIntervalInMs);
+                retryCount--;
+            } while (true);
+
             return queryResponse;
         }
 

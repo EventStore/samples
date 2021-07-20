@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Carts.Api.Requests.Carts;
 using Carts.Carts.GettingCartAtVersion;
 using Carts.Carts.GettingCartById;
+using Carts.Carts.GettingCartHistory;
+using Carts.Carts.GettingCarts;
 using Carts.Carts.Products;
 using Microsoft.AspNetCore.Mvc;
 using Core.Commands;
@@ -107,22 +110,18 @@ namespace Carts.Api.Controllers
             return queryBus.Send<GetCartById, CartDetails>(GetCartById.Create(id));
         }
 
-        // [HttpGet]
-        // public async Task<PagedListResponse<CartShortInfo>> Get([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
-        // {
-        //     var pagedList = await queryBus.Send<GetCarts, IPagedList<CartShortInfo>>(GetCarts.Create(pageNumber, pageSize));
-        //
-        //     return pagedList.ToResponse();
-        // }
-        //
-        //
-        // [HttpGet("{id}/history")]
-        // public async Task<PagedListResponse<CartHistory>> GetHistory(Guid id)
-        // {
-        //     var pagedList = await queryBus.Send<GetCartHistory, IPagedList<CartHistory>>(GetCartHistory.Create(id));
-        //
-        //     return pagedList.ToResponse();
-        // }
+        [HttpGet]
+        public Task<IReadOnlyList<CartShortInfo>> Get([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
+        {
+            return queryBus.Send<GetCarts, IReadOnlyList<CartShortInfo>>(GetCarts.Create(pageNumber, pageSize));
+        }
+
+
+        [HttpGet("{id}/history")]
+        public Task<IReadOnlyList<CartHistory>> GetHistory(Guid id)
+        {
+            return queryBus.Send<GetCartHistory, IReadOnlyList<CartHistory>>(GetCartHistory.Create(id));
+        }
 
         [HttpGet("{id}/versions")]
         public Task<CartDetails> GetVersion(Guid id, [FromQuery] GetCartAtVersion query)
