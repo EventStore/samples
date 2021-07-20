@@ -57,5 +57,22 @@ namespace Carts.Carts.Products
         {
             return Quantity == productItem.Quantity;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((ProductItem) obj);
+        }
+
+        private bool Equals(ProductItem other)
+        {
+            return ProductId.Equals(other.ProductId) && Quantity == other.Quantity;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ProductId, Quantity);
+        }
     }
 }

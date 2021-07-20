@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Ardalis.GuardClauses;
 using Carts.Carts.Products;
 using Carts.Pricing;
 using Core.Commands;
@@ -12,7 +11,6 @@ namespace Carts.Carts.AddingProduct
 {
     public class AddProduct: ICommand
     {
-
         public Guid CartId { get; }
 
         public ProductItem ProductItem { get; }
@@ -24,8 +22,8 @@ namespace Carts.Carts.AddingProduct
         }
         public static AddProduct Create(Guid cartId, ProductItem productItem)
         {
-            Guard.Against.Default(cartId, nameof(cartId));
-            Guard.Against.Null(productItem, nameof(productItem));
+            if (cartId == Guid.Empty)
+                throw new ArgumentOutOfRangeException(nameof(cartId));
 
             return new AddProduct(cartId, productItem);
         }

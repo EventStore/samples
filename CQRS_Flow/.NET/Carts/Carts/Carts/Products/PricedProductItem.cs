@@ -68,5 +68,22 @@ namespace Carts.Carts.Products
         {
             return ProductItem.HasTheSameQuantity(pricedProductItem.ProductItem);
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((PricedProductItem) obj);
+        }
+
+        private bool Equals(PricedProductItem other)
+        {
+            return UnitPrice == other.UnitPrice && ProductItem.Equals(other.ProductItem);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(UnitPrice, ProductItem);
+        }
     }
 }

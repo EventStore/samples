@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Ardalis.GuardClauses;
 using Core.Queries;
 using Nest;
 
 namespace Carts.Carts.GettingCartHistory
 {
-    public class GetCartHistory : IQuery<IReadOnlyList<CartHistory>>
+    public class GetCartHistory: IQuery<IReadOnlyList<CartHistory>>
     {
         public Guid CartId { get; }
         public int PageNumber { get; }
@@ -24,14 +23,16 @@ namespace Carts.Carts.GettingCartHistory
 
         public static GetCartHistory Create(Guid cartId, int pageNumber = 1, int pageSize = 20)
         {
-            Guard.Against.NegativeOrZero(pageNumber, nameof(pageNumber));
-            Guard.Against.NegativeOrZero(pageSize, nameof(pageSize));
+            if (pageNumber <= 0)
+                throw new ArgumentOutOfRangeException(nameof(pageNumber));
+            if (pageSize is <= 0 or > 100)
+                throw new ArgumentOutOfRangeException(nameof(pageSize));
 
             return new GetCartHistory(cartId, pageNumber, pageSize);
         }
     }
 
-    internal class HandleGetCartHistory :
+    internal class HandleGetCartHistory:
         IQueryHandler<GetCartHistory, IReadOnlyList<CartHistory>>
     {
         private readonly IElasticClient elasticClient;

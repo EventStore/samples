@@ -21,7 +21,7 @@ namespace Carts.Api.Tests.Carts.InitializingCart
 
         public override async Task InitializeAsync()
         {
-            CommandResponse = await Post(new InitializeCartRequest {ClientId = ClientId });
+            CommandResponse = await Post(new InitializeCartRequest(ClientId));
         }
     }
 
