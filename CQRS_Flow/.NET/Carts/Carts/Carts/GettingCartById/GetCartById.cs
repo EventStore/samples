@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Core.ElasticSearch.Indices;
+using Core.Exceptions;
 using Core.Queries;
 using Nest;
 
@@ -26,7 +27,7 @@ namespace Carts.Carts.GettingCartById
     }
 
     internal class HandleGetCartById :
-        IQueryHandler<GetCartById, CartDetails?>
+        IQueryHandler<GetCartById, CartDetails>
     {
         private readonly IElasticClient elasticClient;
 
@@ -35,13 +36,13 @@ namespace Carts.Carts.GettingCartById
             this.elasticClient = elasticClient;
         }
 
-        public async Task<CartDetails?> Handle(GetCartById request, CancellationToken cancellationToken)
+        public async Task<CartDetails> Handle(GetCartById request, CancellationToken cancellationToken)
         {
             var result = await elasticClient.GetAsync<CartDetails>(request.CartId,
                 c => c.Index(IndexNameMapper.ToIndexName<CartDetails>()),
                 ct: cancellationToken);
 
-            return result?.Source;
+            return result?.Source ?? throw AggregateNotFoundException.For<Cart>(request.CartId);
         }
     }
 }

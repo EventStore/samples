@@ -8,8 +8,10 @@ using Carts.Carts.GettingCarts;
 using Carts.Carts.InitializingCart;
 using Carts.Carts.RemovingProduct;
 using Carts.Pricing;
+using Core.Commands;
 using Core.ElasticSearch.Projections;
 using Core.EventStoreDB.Repository;
+using Core.Queries;
 using Core.Repositories;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,10 +33,10 @@ namespace Carts.Carts
 
         private static void AddCommandHandlers(IServiceCollection services)
         {
-            services.AddScoped<IRequestHandler<InitializeCart, Unit>, HandleInitializeCart>();
-            services.AddScoped<IRequestHandler<AddProduct, Unit>, HandleAddProduct>();
-            services.AddScoped<IRequestHandler<RemoveProduct, Unit>, HandleRemoveProduct>();
-            services.AddScoped<IRequestHandler<ConfirmCart, Unit>, HandleConfirmCart>();
+            services.AddCommandHandler<InitializeCart, HandleInitializeCart>()
+                    .AddCommandHandler<AddProduct, HandleAddProduct>()
+                    .AddCommandHandler<RemoveProduct, HandleRemoveProduct>()
+                    .AddCommandHandler<ConfirmCart, HandleConfirmCart>();
         }
 
         private static void AddProjections(IServiceCollection services)
@@ -60,10 +62,10 @@ namespace Carts.Carts
 
         private static void AddQueryHandlers(IServiceCollection services)
         {
-            services.AddScoped<IRequestHandler<GetCartById, CartDetails?>, HandleGetCartById>();
-            services.AddScoped<IRequestHandler<GetCarts, IReadOnlyList<CartShortInfo>>, HandleGetCarts>();
-            services.AddScoped<IRequestHandler<GetCartHistory, IReadOnlyList<CartHistory>>, HandleGetCartHistory>();
-            services.AddScoped<IRequestHandler<GetCartAtVersion, CartDetails>, HandleGetCartAtVersion>();
+            services.AddQueryHandler<GetCartById, CartDetails, HandleGetCartById>()
+                    .AddQueryHandler<GetCarts, IReadOnlyList<CartShortInfo>, HandleGetCarts>()
+                    .AddQueryHandler<GetCartHistory, IReadOnlyList<CartHistory>, HandleGetCartHistory>()
+                    .AddQueryHandler<GetCartAtVersion, CartDetails, HandleGetCartAtVersion>();
         }
     }
 }
