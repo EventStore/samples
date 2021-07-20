@@ -1,8 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Ardalis.GuardClauses;
 using Core.Queries;
 using Nest;
 
@@ -21,8 +21,10 @@ namespace Carts.Carts.GettingCarts
 
         public static GetCarts Create(int pageNumber = 1, int pageSize = 20)
         {
-            Guard.Against.NegativeOrZero(pageNumber, nameof(pageNumber));
-            Guard.Against.NegativeOrZero(pageSize, nameof(pageSize));
+            if (pageNumber <= 0)
+                throw new ArgumentOutOfRangeException(nameof(pageNumber));
+            if (pageSize is <= 0 or > 100)
+                throw new ArgumentOutOfRangeException(nameof(pageSize));
 
             return new GetCarts(pageNumber, pageSize);
         }

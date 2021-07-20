@@ -22,9 +22,8 @@ namespace Carts.Carts
     {
         internal static void AddCarts(this IServiceCollection services)
         {
-            services.AddScoped<IProductPriceCalculator, RandomProductPriceCalculator>();
-
-            services.AddScoped<IRepository<Cart>, EventStoreDBRepository<Cart>>();
+            services.AddScoped<IProductPriceCalculator, RandomProductPriceCalculator>()
+                    .AddScoped<IRepository<Cart>, EventStoreDBRepository<Cart>>();
 
             AddCommandHandlers(services);
             AddProjections(services);
