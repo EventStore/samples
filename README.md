@@ -16,7 +16,7 @@ Read more in the [Contribution Guidelines](./CONTRIBUTING.md)
 
 Samples are organised by the specific topic. By going to the folder, you can find dedicated folders for different programming languages/environments.
 
-### **[CQRS flow](./Sample/EventStoreDB/ECommerce)** 
+### **[CQRS flow](./CQRS_Flow/)** 
 - [.NET](./CQRS_Flow/.NET/)
 
 **Description**:
