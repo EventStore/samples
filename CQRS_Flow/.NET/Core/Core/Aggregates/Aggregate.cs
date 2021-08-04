@@ -14,11 +14,11 @@ namespace Core.Aggregates
 
         public int Version { get; protected set; }
 
-        [NonSerialized] private readonly Queue<IEvent> uncommittedEvents = new Queue<IEvent>();
+        [NonSerialized] private readonly Queue<object> uncommittedEvents = new Queue<object>();
 
         public virtual void When(object @event) { }
 
-        public IEvent[] DequeueUncommittedEvents()
+        public object[] DequeueUncommittedEvents()
         {
             var dequeuedEvents = uncommittedEvents.ToArray();
 
@@ -27,7 +27,7 @@ namespace Core.Aggregates
             return dequeuedEvents;
         }
 
-        protected void Enqueue(IEvent @event)
+        protected void Enqueue(object @event)
         {
             uncommittedEvents.Enqueue(@event);
         }

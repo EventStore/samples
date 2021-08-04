@@ -5,8 +5,7 @@ namespace Core.Events
 {
     public interface IEventBus
     {
-        Task Publish<TEvent>(TEvent @event, CancellationToken ct)
-            where TEvent: IEvent;
+        Task Publish<TEvent>(TEvent @event, CancellationToken ct);
 
         Task Publish(object @event, CancellationToken ct);
     }

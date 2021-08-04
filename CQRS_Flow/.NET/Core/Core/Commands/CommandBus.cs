@@ -14,7 +14,7 @@ namespace Core.Commands
             this.serviceProvider = serviceProvider;
         }
 
-        public Task Send<TCommand>(TCommand command, CancellationToken ct) where TCommand : ICommand
+        public Task Send<TCommand>(TCommand command, CancellationToken ct)
         {
             var commandHandler = serviceProvider.GetRequiredService<ICommandHandler<TCommand>>();
             return commandHandler.Handle(command, ct);

@@ -6,7 +6,7 @@ using Core.Repositories;
 
 namespace Carts.Carts.InitializingCart
 {
-    public class InitializeCart: ICommand
+    public class InitializeCart
     {
         public Guid CartId { get; }
 

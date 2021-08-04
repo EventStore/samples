@@ -7,7 +7,6 @@ namespace Core.Commands
         public static IServiceCollection AddCommandHandler<TCommand, TCommandHandler>(
             this IServiceCollection services
         )
-            where TCommand : ICommand
             where TCommandHandler : class, ICommandHandler<TCommand>
         {
             return services.AddTransient<TCommandHandler>()

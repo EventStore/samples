@@ -7,7 +7,6 @@ namespace Core.Queries
         public static IServiceCollection AddQueryHandler<TQuery, TQueryResult, TQueryHandler>(
             this IServiceCollection services
         )
-            where TQuery : IQuery<TQueryResult>
             where TQueryHandler : class, IQueryHandler<TQuery, TQueryResult>
         {
             return services.AddTransient<TQueryHandler>()

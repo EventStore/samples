@@ -19,7 +19,6 @@ namespace Core.Events
         }
 
         public async Task Publish<TEvent>(TEvent @event, CancellationToken ct)
-            where TEvent : IEvent
         {
             var eventHandlers = serviceProvider.GetServices<IEventHandler<TEvent>>();
 

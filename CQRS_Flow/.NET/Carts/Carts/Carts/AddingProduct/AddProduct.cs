@@ -8,7 +8,7 @@ using Core.Repositories;
 
 namespace Carts.Carts.AddingProduct
 {
-    public class AddProduct: ICommand
+    public class AddProduct
     {
         public Guid CartId { get; }
 

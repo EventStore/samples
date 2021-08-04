@@ -3,7 +3,7 @@ using Core.Events;
 
 namespace Carts.Carts.ConfirmingCart
 {
-    public class CartConfirmed: IEvent
+    public class CartConfirmed
     {
         public Guid CartId { get; }
 

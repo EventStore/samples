@@ -15,7 +15,7 @@ namespace Core.Queries
             this.serviceProvider = serviceProvider;
         }
 
-        public Task<TResponse> Send<TQuery, TResponse>(TQuery query, CancellationToken ct) where TQuery : IQuery<TResponse>
+        public Task<TResponse> Send<TQuery, TResponse>(TQuery query, CancellationToken ct)
         {
             var queryHandler = serviceProvider.GetRequiredService<IQueryHandler<TQuery, TResponse>>();
             return queryHandler.Handle(query, ct);

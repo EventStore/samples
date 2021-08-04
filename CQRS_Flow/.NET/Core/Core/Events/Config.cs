@@ -7,7 +7,6 @@ namespace Core.Events
         public static IServiceCollection AddEventHandler<TEvent, TEventResult, TEventHandler>(
             this IServiceCollection services
         )
-            where TEvent : IEvent
             where TEventHandler : class, IEventHandler<TEvent>
         {
             return services.AddTransient<TEventHandler>()

@@ -6,7 +6,7 @@ using Core.Repositories;
 
 namespace Carts.Carts.ConfirmingCart
 {
-    public class ConfirmCart: ICommand
+    public class ConfirmCart
     {
         public Guid CartId { get; }
 

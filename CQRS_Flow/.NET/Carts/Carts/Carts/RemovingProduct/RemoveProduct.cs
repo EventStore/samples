@@ -7,7 +7,7 @@ using Core.Repositories;
 
 namespace Carts.Carts.RemovingProduct
 {
-    public class RemoveProduct: ICommand
+    public class RemoveProduct
     {
         public Guid CartId { get; }
 

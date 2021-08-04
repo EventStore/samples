@@ -8,7 +8,7 @@ using Nest;
 
 namespace Carts.Carts.GettingCartById
 {
-    public class GetCartById : IQuery<CartDetails>
+    public class GetCartById
     {
         public Guid CartId { get; }
 

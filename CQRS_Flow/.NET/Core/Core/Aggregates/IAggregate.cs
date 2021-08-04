@@ -13,6 +13,6 @@ namespace Core.Aggregates
         T Id { get; }
         int Version { get; }
 
-        IEvent[] DequeueUncommittedEvents();
+        object[] DequeueUncommittedEvents();
     }
 }

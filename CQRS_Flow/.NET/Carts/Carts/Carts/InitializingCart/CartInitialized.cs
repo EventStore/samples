@@ -3,7 +3,7 @@ using Core.Events;
 
 namespace Carts.Carts.InitializingCart
 {
-    public class CartInitialized: IEvent
+    public class CartInitialized
     {
         public Guid CartId { get; }
 
