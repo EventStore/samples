@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Core.Commands;
 using Core.Repositories;
-using MediatR;
 
 namespace Carts.Carts.ConfirmingCart
 {
@@ -37,7 +36,7 @@ namespace Carts.Carts.ConfirmingCart
             this.cartRepository = cartRepository;
         }
 
-        public Task<Unit> Handle(ConfirmCart command, CancellationToken cancellationToken)
+        public Task Handle(ConfirmCart command, CancellationToken cancellationToken)
         {
             return cartRepository.GetAndUpdate(
                 command.CartId,

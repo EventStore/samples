@@ -5,7 +5,6 @@ using Carts.Carts.Products;
 using Carts.Pricing;
 using Core.Commands;
 using Core.Repositories;
-using MediatR;
 
 namespace Carts.Carts.AddingProduct
 {
@@ -44,7 +43,7 @@ namespace Carts.Carts.AddingProduct
             this.productPriceCalculator = productPriceCalculator;
         }
 
-        public Task<Unit> Handle(AddProduct command, CancellationToken cancellationToken)
+        public Task Handle(AddProduct command, CancellationToken cancellationToken)
         {
             return cartRepository.GetAndUpdate(
                 command.CartId,

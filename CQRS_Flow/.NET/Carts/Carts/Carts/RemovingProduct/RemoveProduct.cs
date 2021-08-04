@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Carts.Carts.Products;
 using Core.Commands;
 using Core.Repositories;
-using MediatR;
 
 namespace Carts.Carts.RemovingProduct
 {
@@ -38,7 +37,7 @@ namespace Carts.Carts.RemovingProduct
             this.cartRepository = cartRepository;
         }
 
-        public Task<Unit> Handle(RemoveProduct command, CancellationToken cancellationToken)
+        public Task Handle(RemoveProduct command, CancellationToken cancellationToken)
         {
             return cartRepository.GetAndUpdate(
                 command.CartId,

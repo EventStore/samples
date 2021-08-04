@@ -125,7 +125,7 @@ namespace Core.EventStoreDB.Subscriptions
                     scope.ServiceProvider.GetRequiredService<IEventBus>();
 
                 // publish event to internal event bus
-                await eventBus.Publish((IEvent)resolvedEvent.Deserialize());
+                await eventBus.Publish(resolvedEvent.Deserialize(), ct);
 
                 await checkpointRepository.Store(subscriptionId, resolvedEvent.Event.Position.CommitPosition, ct);
             }

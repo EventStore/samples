@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Queries
 {
@@ -12,7 +11,6 @@ namespace Core.Queries
             where TQueryHandler : class, IQueryHandler<TQuery, TQueryResult>
         {
             return services.AddTransient<TQueryHandler>()
-                .AddTransient<IRequestHandler<TQuery, TQueryResult>>(sp => sp.GetRequiredService<TQueryHandler>())
                 .AddTransient<IQueryHandler<TQuery, TQueryResult>>(sp => sp.GetRequiredService<TQueryHandler>());
         }
     }

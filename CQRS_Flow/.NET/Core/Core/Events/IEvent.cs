@@ -1,8 +1,6 @@
-using MediatR;
-
 namespace Core.Events
 {
-    public interface IEvent: INotification
+    public interface IEvent
     {
     }
 }

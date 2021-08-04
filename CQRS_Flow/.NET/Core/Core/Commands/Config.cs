@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Commands
 {
@@ -12,7 +11,6 @@ namespace Core.Commands
             where TCommandHandler : class, ICommandHandler<TCommand>
         {
             return services.AddTransient<TCommandHandler>()
-                .AddTransient<IRequestHandler<TCommand, Unit>>(sp => sp.GetRequiredService<TCommandHandler>())
                 .AddTransient<ICommandHandler<TCommand>>(sp => sp.GetRequiredService<TCommandHandler>());
         }
     }

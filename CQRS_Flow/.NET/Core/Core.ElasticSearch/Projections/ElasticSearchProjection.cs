@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Core.ElasticSearch.Indices;
 using Core.Events;
 using Core.Projections;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 
@@ -35,7 +34,7 @@ namespace Core.ElasticSearch.Projections
 
             entity.When(@event);
 
-            var result = await elasticClient.UpdateAsync<TView>(id,
+            await elasticClient.UpdateAsync<TView>(id,
                 u => u.Doc(entity).Upsert(entity).Index(IndexNameMapper.ToIndexName<TView>()),
                 ct
             );
@@ -49,7 +48,7 @@ namespace Core.ElasticSearch.Projections
             where TView : class, IProjection
             where TEvent : IEvent
         {
-            services.AddTransient<INotificationHandler<TEvent>>(sp =>
+            services.AddTransient<IEventHandler<TEvent>>(sp =>
             {
                 var session = sp.GetRequiredService<IElasticClient>();
 

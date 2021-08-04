@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Carts.Api.Requests.Carts;
 using Carts.Carts.GettingCartAtVersion;
@@ -32,7 +33,7 @@ namespace Carts.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> InitializeCart([FromBody] InitializeCartRequest? request)
+        public async Task<IActionResult> InitializeCart([FromBody] InitializeCartRequest? request, CancellationToken ct)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -44,13 +45,13 @@ namespace Carts.Api.Controllers
                 request.ClientId
             );
 
-            await commandBus.Send(command);
+            await commandBus.Send(command, ct);
 
             return Created("api/Carts", cartId);
         }
 
         [HttpPost("{id}/products")]
-        public async Task<IActionResult> AddProduct(Guid id, [FromBody] AddProductRequest? request)
+        public async Task<IActionResult> AddProduct(Guid id, [FromBody] AddProductRequest? request, CancellationToken ct)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -63,13 +64,13 @@ namespace Carts.Api.Controllers
                 )
             );
 
-            await commandBus.Send(command);
+            await commandBus.Send(command, ct);
 
             return Ok();
         }
 
         [HttpDelete("{id}/products")]
-        public async Task<IActionResult> RemoveProduct(Guid id, [FromBody] RemoveProductRequest? request)
+        public async Task<IActionResult> RemoveProduct(Guid id, [FromBody] RemoveProductRequest? request, CancellationToken ct)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -83,49 +84,49 @@ namespace Carts.Api.Controllers
                 )
             );
 
-            await commandBus.Send(command);
+            await commandBus.Send(command, ct);
 
             return Ok();
         }
 
         [HttpPut("{id}/confirmation")]
-        public async Task<IActionResult> ConfirmCart(Guid id)
+        public async Task<IActionResult> ConfirmCart(Guid id, CancellationToken ct)
         {
             var command = Carts.ConfirmingCart.ConfirmCart.Create(
                 id
             );
 
-            await commandBus.Send(command);
+            await commandBus.Send(command, ct);
 
             return Ok();
         }
 
         [HttpGet("{id}")]
-        public Task<CartDetails> Get(Guid id)
+        public Task<CartDetails> Get(Guid id, CancellationToken ct)
         {
-            return queryBus.Send<GetCartById, CartDetails>(GetCartById.Create(id));
+            return queryBus.Send<GetCartById, CartDetails>(GetCartById.Create(id), ct);
         }
 
         [HttpGet]
-        public Task<IReadOnlyList<CartShortInfo>> Get([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
+        public Task<IReadOnlyList<CartShortInfo>> Get(CancellationToken ct, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
         {
-            return queryBus.Send<GetCarts, IReadOnlyList<CartShortInfo>>(GetCarts.Create(pageNumber, pageSize));
+            return queryBus.Send<GetCarts, IReadOnlyList<CartShortInfo>>(GetCarts.Create(pageNumber, pageSize), ct);
         }
 
 
         [HttpGet("{id}/history")]
-        public Task<IReadOnlyList<CartHistory>> GetHistory(Guid id)
+        public Task<IReadOnlyList<CartHistory>> GetHistory(Guid id, CancellationToken ct)
         {
-            return queryBus.Send<GetCartHistory, IReadOnlyList<CartHistory>>(GetCartHistory.Create(id));
+            return queryBus.Send<GetCartHistory, IReadOnlyList<CartHistory>>(GetCartHistory.Create(id), ct);
         }
 
         [HttpGet("{id}/versions")]
-        public Task<CartDetails> GetVersion(Guid id, [FromQuery] GetCartAtVersion? query)
+        public Task<CartDetails> GetVersion(Guid id, [FromQuery] GetCartAtVersion? query, CancellationToken ct)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
 
-            return queryBus.Send<GetCartAtVersion, CartDetails>(GetCartAtVersion.Create(id, query.Version));
+            return queryBus.Send<GetCartAtVersion, CartDetails>(GetCartAtVersion.Create(id, query.Version), ct);
         }
     }
 }
