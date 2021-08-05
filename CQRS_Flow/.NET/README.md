@@ -17,9 +17,9 @@ This sample is showing a  typical flow of the Event Sourcing pattern with [Event
 1. Run: `docker-compose up`.
 2. Wait until all dockers got are downloaded and running.
 3. You should automatically get:
+    - EventStoreDB UI: http://localhost:2113/
     - ElasticSearch running at http://localhost:9200
     - Kibana - UI for ElasticSearch . Available at: http://localhost:5601
-    - EventStoreDB UI: http://localhost:2113/
 4. Open, build and run `ECommerce.sln` solution.
 	- Swagger should be available at: http://localhost:5000/index.html
 
@@ -31,7 +31,7 @@ It uses:
 - Stores events to EventStoreDB,
 - Builds read models using [Subscription to `$all`](https://developers.eventstore.com/clients/grpc/subscribing-to-streams/#subscribing-to-all).
 - Read models are stored as [ElasticSearch](https://www.elastic.co/elasticsearch/) documents.
-- CQRS with MediatR,
+- CQRS flow example with Command and Query handling,
 - App has Swagger and predefined [docker-compose](./docker-compose.yml) to run and play with samples.
 
 ## Write Model

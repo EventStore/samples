@@ -9,7 +9,7 @@ using EventStore.Client;
 
 namespace Carts.Carts.GettingCartAtVersion
 {
-    public class GetCartAtVersion : IQuery<CartDetails>
+    public class GetCartAtVersion
     {
         public Guid CartId { get; }
         public ulong Version { get; }

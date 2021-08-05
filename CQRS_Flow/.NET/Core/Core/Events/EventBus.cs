@@ -1,26 +1,47 @@
 using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Events
 {
     public class EventBus: IEventBus
     {
-        private readonly IMediator mediator;
+        private readonly IServiceProvider serviceProvider;
+        private static readonly ConcurrentDictionary<Type, MethodInfo> PublishMethods = new();
 
-        public EventBus(
-            IMediator mediator
-        )
+        public EventBus(IServiceProvider serviceProvider)
         {
-            this.mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this.serviceProvider = serviceProvider;
         }
 
-        public async Task Publish(params IEvent[] events)
+        public async Task Publish<TEvent>(TEvent @event, CancellationToken ct)
         {
-            foreach (var @event in events)
+            var eventHandlers = serviceProvider.GetServices<IEventHandler<TEvent>>();
+
+            foreach (var eventHandler in eventHandlers)
             {
-                await mediator.Publish(@event);
+                await eventHandler.Handle(@event, ct);
             }
+        }
+
+        public Task Publish(object @event, CancellationToken ct)
+        {
+            return (Task)GetGenericPublishFor(@event)
+                .Invoke(this, new[] {@event, ct})!;
+        }
+
+        private static MethodInfo GetGenericPublishFor(object @event)
+        {
+            return PublishMethods.GetOrAdd(@event.GetType(), eventType =>
+                typeof(EventBus)
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                    .Single(m => m.Name == nameof(Publish) && m.GetGenericArguments().Any())
+                    .MakeGenericMethod(eventType)
+            );
         }
     }
 }

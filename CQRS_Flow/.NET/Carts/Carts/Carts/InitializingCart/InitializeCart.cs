@@ -3,11 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Core.Commands;
 using Core.Repositories;
-using MediatR;
 
 namespace Carts.Carts.InitializingCart
 {
-    public class InitializeCart: ICommand
+    public class InitializeCart
     {
         public Guid CartId { get; }
 
@@ -42,13 +41,11 @@ namespace Carts.Carts.InitializingCart
             this.cartRepository = cartRepository;
         }
 
-        public async Task<Unit> Handle(InitializeCart command, CancellationToken cancellationToken)
+        public async Task Handle(InitializeCart command, CancellationToken cancellationToken)
         {
             var cart = Cart.Initialize(command.CartId, command.ClientId);
 
             await cartRepository.Add(cart, cancellationToken);
-
-            return Unit.Value;
         }
     }
 }

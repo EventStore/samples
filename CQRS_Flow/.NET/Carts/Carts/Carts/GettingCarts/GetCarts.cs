@@ -8,7 +8,7 @@ using Nest;
 
 namespace Carts.Carts.GettingCarts
 {
-    public class GetCarts : IQuery<IReadOnlyList<CartShortInfo>>
+    public class GetCarts
     {
         public int PageNumber { get; }
         public int PageSize { get; }

@@ -4,7 +4,7 @@ using Core.Events;
 
 namespace Carts.Carts.AddingProduct
 {
-    public class ProductAdded: IEvent
+    public class ProductAdded
     {
         public Guid CartId { get; }
 

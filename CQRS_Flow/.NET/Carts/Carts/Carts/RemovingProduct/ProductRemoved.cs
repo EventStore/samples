@@ -1,10 +1,9 @@
 using System;
 using Carts.Carts.Products;
-using Core.Events;
 
 namespace Carts.Carts.RemovingProduct
 {
-    public class ProductRemoved: IEvent
+    public class ProductRemoved
     {
         public Guid CartId { get; }
 

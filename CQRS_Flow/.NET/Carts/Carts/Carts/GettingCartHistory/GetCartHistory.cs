@@ -8,7 +8,7 @@ using Nest;
 
 namespace Carts.Carts.GettingCartHistory
 {
-    public class GetCartHistory: IQuery<IReadOnlyList<CartHistory>>
+    public class GetCartHistory
     {
         public Guid CartId { get; }
         public int PageNumber { get; }

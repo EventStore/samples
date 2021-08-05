@@ -13,7 +13,6 @@ using Core.ElasticSearch.Projections;
 using Core.EventStoreDB.Repository;
 using Core.Queries;
 using Core.Repositories;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Carts.Carts

@@ -1,9 +1,10 @@
-using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Core.Commands
 {
-    public interface ICommandHandler<in T>: IRequestHandler<T>
-        where T : ICommand
+    public interface ICommandHandler<in TCommand>
     {
+        Task Handle(TCommand command, CancellationToken ct);
     }
 }

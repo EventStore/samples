@@ -18,7 +18,7 @@ namespace Core.EventStoreDB.Serialization
             return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(resolvedEvent.Event.Data.Span), eventType!)!;
         }
 
-        public static EventData ToJsonEventData(this IEvent @event) =>
+        public static EventData ToJsonEventData(this object @event) =>
             new(
                 Uuid.NewUuid(),
                 EventTypeMapper.ToName(@event.GetType()),

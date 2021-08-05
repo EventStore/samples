@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Events
 {
@@ -8,11 +7,9 @@ namespace Core.Events
         public static IServiceCollection AddEventHandler<TEvent, TEventResult, TEventHandler>(
             this IServiceCollection services
         )
-            where TEvent : IEvent
             where TEventHandler : class, IEventHandler<TEvent>
         {
             return services.AddTransient<TEventHandler>()
-                .AddTransient<INotificationHandler<TEvent>>(sp => sp.GetRequiredService<TEventHandler>())
                 .AddTransient<IEventHandler<TEvent>>(sp => sp.GetRequiredService<TEventHandler>());
         }
     }

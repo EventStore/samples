@@ -1,20 +1,23 @@
+using System;
+using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Commands
 {
     public class CommandBus: ICommandBus
     {
-        private readonly IMediator mediator;
+        private readonly IServiceProvider serviceProvider;
 
-        public CommandBus(IMediator mediator)
+        public CommandBus(IServiceProvider serviceProvider)
         {
-            this.mediator = mediator;
+            this.serviceProvider = serviceProvider;
         }
 
-        public Task Send<TCommand>(TCommand command) where TCommand : ICommand
+        public Task Send<TCommand>(TCommand command, CancellationToken ct)
         {
-            return mediator.Send(command);
+            var commandHandler = serviceProvider.GetRequiredService<ICommandHandler<TCommand>>();
+            return commandHandler.Handle(command, ct);
         }
     }
 }
