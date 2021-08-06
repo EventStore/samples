@@ -6,23 +6,21 @@ This sample is showing a  typical flow of the Event Sourcing pattern with [Event
 
 ## Prerequisities
 
-1. Install git - https://git-scm.com/downloads.
-2. Install .NET Core 5.0 - https://dotnet.microsoft.com/download/dotnet/5.0.
-3. Install Visual Studio 2019, Rider or VSCode.
-4. Install docker - https://docs.docker.com/docker-for-windows/install/.
-5. Open `ECommerce.sln` solution.
+1. Install .NET Core 5.0 - https://dotnet.microsoft.com/download/dotnet/5.0.
+2. Install Visual Studio 2019, Rider or VSCode.
+3. Install docker - https://docs.docker.com/docker-for-windows/install/.
+4. Open `ECommerce.sln` solution.
 
 ## Running
 
 1. Run: `docker-compose up`.
-2. Wait until all dockers got are downloaded and running.
+2. Wait until all dockers are up and running.
 3. You should automatically get:
     - EventStoreDB UI: http://localhost:2113/
     - ElasticSearch running at http://localhost:9200
     - Kibana - UI for ElasticSearch . Available at: http://localhost:5601
 4. Open, build and run `ECommerce.sln` solution.
 	- Swagger should be available at: http://localhost:5000/index.html
-
 
 ## Overview
 

@@ -27,6 +27,15 @@ Samples are organised by the specific topic. By going to the folder, you can fin
 - Read models are stored as ElasticSearch documents.
 - Shows how to unit and integration test solution.
 
+
+### **[Crypto Shredding](./Crypto_Shredding/)** 
+- [.NET](./Crypto_Shredding/.NET/)
+
+**Description**:
+- shows how to Protecting Sensitive Data (e.g. for [European General Data Protection Regulation](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation)) in Event-Sourced Systems.
+- shows how to use the .NET `System.Security.Cryptography` library with [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) algorithm to encrypt and decrypt events' data.
+- uses EventStoreDB.
+
 ## Running samples locally
 
 Check the `README.md` file in the specific sample folder for the detailed run instructions.
