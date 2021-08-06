@@ -6,16 +6,15 @@ Read more in the [Diego Martin](https://github.com/diegosasw) article ["Protecti
 
 ## Prerequisities
 
-1. Install .NET Core 5.0 - https://dotnet.microsoft.com/download/dotnet/5.0.
-2. Install Visual Studio 2019, Rider or VSCode.
-3. Install docker - https://docs.docker.com/docker-for-windows/install/.
-4. Open `ECommerce.sln` solution.
+- .NET 5.0 - https://dotnet.microsoft.com/download/dotnet/5.0.
+- Visual Studio 2019, Jetbrains Rider or VSCode.
+- Docker - https://docs.docker.com/docker-for-windows/install/.
 
 ## Running
 
 1. Run: `docker-compose up`.
-2. Wait until all dockers are up and running.
-3. You should automatically get:
+2. Wait until all Docker containers are up and running.
+3. Check that you can access each started component the following URL:
      - EventStoreDB UI: http://localhost:2113/
 4. Open, build and run [tests](./src/CryptoShredding.IntegrationTests/EventStoreTests/GetEventsTests.cs) in [CryptoShredding.sln](CryptoShredding.sln) solution.
 
