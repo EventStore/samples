@@ -29,12 +29,15 @@ namespace Core.Events
         public static string ToStreamId<TStream>(object aggregateId, object? tenantId = null) =>
             ToStreamId(typeof(TStream), aggregateId);
 
+        // Generates a stream id in the canonical `{category}-{aggregateId}` format
         public static string ToStreamId(Type streamType, object aggregateId, object? tenantId = null)
         {
-            var tenantPrefix = tenantId != null ? $"{tenantId}_"  : "";
+            var tenantPrefix = tenantId == null ? $"{tenantId}_"  : "";
+            var category = ToStreamPrefix(streamType);
 
-            return $"{tenantPrefix}{ToStreamPrefix(streamType)}-{aggregateId}";
+            // (Out-of-the box, the category projection treats the category as the left bit, based on the `-` separator)
+            // For this reason, we place the "{tenantId}_" bit on the right hand side of the '-' if present
+            return $"{category}-{tenantPrefix}{aggregateId}";
         }
-
     }
 }
