@@ -35,8 +35,8 @@ namespace Core.Events
             var tenantPrefix = tenantId == null ? $"{tenantId}_"  : "";
             var category = ToStreamPrefix(streamType);
 
-            // (Out-of-the box, the category projection treats the category as the left bit, based on the `-` separator)
-            // For this reason, we place the "{tenantId}_" bit on the right hand side of the '-' if present
+            // (Out-of-the box, the category projection treats anything before a `-` separator as the category name)
+            // For this reason, we place the "{tenantId}_" bit (if present) on the right hand side of the '-'
             return $"{category}-{tenantPrefix}{aggregateId}";
         }
     }
