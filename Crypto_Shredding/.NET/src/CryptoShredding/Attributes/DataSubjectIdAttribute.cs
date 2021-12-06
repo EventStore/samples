@@ -1,12 +1,11 @@
 using System;
 
-namespace CryptoShredding.Attributes
-{
-    /**
+namespace CryptoShredding.Attributes;
+
+/**
     * Specifies the PII owner (e.g: the person Id)
     */
-    public class DataSubjectIdAttribute 
-        : Attribute
-    {
-    }
+public class DataSubjectIdAttribute 
+    : Attribute
+{
 }

@@ -1,33 +1,32 @@
 using System;
 using System.Threading.Tasks;
 
-namespace CryptoShredding.IntegrationTests.TestSupport
+namespace CryptoShredding.IntegrationTests.TestSupport;
+
+public abstract class Given_WhenAsync_Then_Test
+    : IDisposable
 {
-    public abstract class Given_WhenAsync_Then_Test
-        : IDisposable
+    protected Given_WhenAsync_Then_Test()
     {
-        protected Given_WhenAsync_Then_Test()
-        {
-            Task.Run((Func<Task>) (async () => await this.SetupAsync())).Wait();
-        }
+        Task.Run((Func<Task>) (async () => await this.SetupAsync())).Wait();
+    }
 
-        private async Task SetupAsync()
-        {
-            await Given();
-            await When();
-        }
+    private async Task SetupAsync()
+    {
+        await Given();
+        await When();
+    }
 
-        protected abstract Task Given();
+    protected abstract Task Given();
 
-        protected abstract Task When();
+    protected abstract Task When();
 
-        public void Dispose()
-        {
-            Cleanup();
-        }
+    public void Dispose()
+    {
+        Cleanup();
+    }
 
-        protected virtual void Cleanup()
-        {
-        }
+    protected virtual void Cleanup()
+    {
     }
 }

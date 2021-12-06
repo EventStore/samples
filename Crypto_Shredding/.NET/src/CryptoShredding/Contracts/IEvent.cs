@@ -1,6 +1,5 @@
-namespace CryptoShredding.Contracts
+namespace CryptoShredding.Contracts;
+
+public interface IEvent
 {
-    public interface IEvent
-    {
-    }
 }

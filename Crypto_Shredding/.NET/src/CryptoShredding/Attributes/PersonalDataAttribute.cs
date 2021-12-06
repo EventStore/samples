@@ -1,12 +1,11 @@
 using System;
 
-namespace CryptoShredding.Attributes
-{
-    /**
+namespace CryptoShredding.Attributes;
+
+/**
      * Specifies the property that holds PII
      */
-    public class PersonalDataAttribute
-        : Attribute
-    {
-    }
+public class PersonalDataAttribute
+    : Attribute
+{
 }
