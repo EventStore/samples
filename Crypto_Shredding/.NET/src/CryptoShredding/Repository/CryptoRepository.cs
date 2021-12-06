@@ -1,44 +1,43 @@
 using System;
 using System.Collections.Generic;
 
-namespace CryptoShredding.Repository
+namespace CryptoShredding.Repository;
+
+public class CryptoRepository
 {
-    public class CryptoRepository
+    private readonly IDictionary<string, EncryptionKey> _cryptoStore;
+
+    public CryptoRepository()
     {
-        private readonly IDictionary<string, EncryptionKey> _cryptoStore;
+        _cryptoStore = new Dictionary<string, EncryptionKey>();
+    }
 
-        public CryptoRepository()
+    public EncryptionKey GetExistingOrNew(string id, Func<EncryptionKey> keyGenerator)
+    {
+        var isExisting = _cryptoStore.TryGetValue(id, out var keyStored);
+        if (isExisting)
         {
-            _cryptoStore = new Dictionary<string, EncryptionKey>();
+            return keyStored;
         }
 
-        public EncryptionKey GetExistingOrNew(string id, Func<EncryptionKey> keyGenerator)
-        {
-            var isExisting = _cryptoStore.TryGetValue(id, out var keyStored);
-            if (isExisting)
-            {
-                return keyStored;
-            }
-
-            var newEncryptionKey = keyGenerator.Invoke();
-            _cryptoStore.Add(id, newEncryptionKey);
-            return newEncryptionKey;
-        }
+        var newEncryptionKey = keyGenerator.Invoke();
+        _cryptoStore.Add(id, newEncryptionKey);
+        return newEncryptionKey;
+    }
         
-        public EncryptionKey GetExistingOrDefault(string id)
+    public EncryptionKey GetExistingOrDefault(string id)
+    {
+        var isExisting = _cryptoStore.TryGetValue(id, out var keyStored);
+        if (isExisting)
         {
-            var isExisting = _cryptoStore.TryGetValue(id, out var keyStored);
-            if (isExisting)
-            {
-                return keyStored;
-            }
-
-            return default;
+            return keyStored;
         }
 
-        public void DeleteEncryptionKey(string id)
-        {
-            _cryptoStore.Remove(id);
-        }
+        return default;
+    }
+
+    public void DeleteEncryptionKey(string id)
+    {
+        _cryptoStore.Remove(id);
     }
 }
