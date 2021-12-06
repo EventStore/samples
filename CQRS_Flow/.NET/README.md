@@ -6,8 +6,8 @@ This sample is showing a  typical flow of the Event Sourcing pattern with [Event
 
 ## Prerequisities
 
-- .NET 5.0 - https://dotnet.microsoft.com/download/dotnet/5.0.
-- Visual Studio 2019, Jetbrains Rider or VSCode.
+- .NET 6.0 - https://dotnet.microsoft.com/download/dotnet/6.0.
+- Visual Studio 2022, Jetbrains Rider or VSCode.
 - Docker - https://docs.docker.com/docker-for-windows/install/.
 
 ## Running
