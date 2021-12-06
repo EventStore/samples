@@ -5,20 +5,19 @@ using Core.Queries;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Core
+namespace Core;
+
+public static class Config
 {
-    public static class Config
+    public static IServiceCollection AddCoreServices(this IServiceCollection services)
     {
-        public static IServiceCollection AddCoreServices(this IServiceCollection services)
-        {
-            services
-                .AddScoped<ICommandBus, CommandBus>()
-                .AddScoped<IQueryBus, QueryBus>();
+        services
+            .AddScoped<ICommandBus, CommandBus>()
+            .AddScoped<IQueryBus, QueryBus>();
 
-            services.TryAddScoped<IEventBus, EventBus>();
-            services.TryAddScoped<IIdGenerator, NulloIdGenerator>();
+        services.TryAddScoped<IEventBus, EventBus>();
+        services.TryAddScoped<IIdGenerator, NulloIdGenerator>();
 
-            return services;
-        }
+        return services;
     }
 }

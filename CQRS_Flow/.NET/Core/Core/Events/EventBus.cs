@@ -6,42 +6,41 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Core.Events
+namespace Core.Events;
+
+public class EventBus: IEventBus
 {
-    public class EventBus: IEventBus
+    private readonly IServiceProvider serviceProvider;
+    private static readonly ConcurrentDictionary<Type, MethodInfo> PublishMethods = new();
+
+    public EventBus(IServiceProvider serviceProvider)
     {
-        private readonly IServiceProvider serviceProvider;
-        private static readonly ConcurrentDictionary<Type, MethodInfo> PublishMethods = new();
+        this.serviceProvider = serviceProvider;
+    }
 
-        public EventBus(IServiceProvider serviceProvider)
+    public async Task Publish<TEvent>(TEvent @event, CancellationToken ct)
+    {
+        var eventHandlers = serviceProvider.GetServices<IEventHandler<TEvent>>();
+
+        foreach (var eventHandler in eventHandlers)
         {
-            this.serviceProvider = serviceProvider;
+            await eventHandler.Handle(@event, ct);
         }
+    }
 
-        public async Task Publish<TEvent>(TEvent @event, CancellationToken ct)
-        {
-            var eventHandlers = serviceProvider.GetServices<IEventHandler<TEvent>>();
+    public Task Publish(object @event, CancellationToken ct)
+    {
+        return (Task)GetGenericPublishFor(@event)
+            .Invoke(this, new[] {@event, ct})!;
+    }
 
-            foreach (var eventHandler in eventHandlers)
-            {
-                await eventHandler.Handle(@event, ct);
-            }
-        }
-
-        public Task Publish(object @event, CancellationToken ct)
-        {
-            return (Task)GetGenericPublishFor(@event)
-                .Invoke(this, new[] {@event, ct})!;
-        }
-
-        private static MethodInfo GetGenericPublishFor(object @event)
-        {
-            return PublishMethods.GetOrAdd(@event.GetType(), eventType =>
-                typeof(EventBus)
-                    .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                    .Single(m => m.Name == nameof(Publish) && m.GetGenericArguments().Any())
-                    .MakeGenericMethod(eventType)
-            );
-        }
+    private static MethodInfo GetGenericPublishFor(object @event)
+    {
+        return PublishMethods.GetOrAdd(@event.GetType(), eventType =>
+            typeof(EventBus)
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Single(m => m.Name == nameof(Publish) && m.GetGenericArguments().Any())
+                .MakeGenericMethod(eventType)
+        );
     }
 }

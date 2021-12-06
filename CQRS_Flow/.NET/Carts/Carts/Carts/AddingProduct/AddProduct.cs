@@ -6,49 +6,48 @@ using Carts.Pricing;
 using Core.Commands;
 using Core.Repositories;
 
-namespace Carts.Carts.AddingProduct
+namespace Carts.Carts.AddingProduct;
+
+public class AddProduct
 {
-    public class AddProduct
+    public Guid CartId { get; }
+
+    public ProductItem ProductItem { get; }
+
+    private AddProduct(Guid cartId, ProductItem productItem)
     {
-        public Guid CartId { get; }
+        CartId = cartId;
+        ProductItem = productItem;
+    }
+    public static AddProduct Create(Guid cartId, ProductItem productItem)
+    {
+        if (cartId == Guid.Empty)
+            throw new ArgumentOutOfRangeException(nameof(cartId));
 
-        public ProductItem ProductItem { get; }
+        return new AddProduct(cartId, productItem);
+    }
+}
 
-        private AddProduct(Guid cartId, ProductItem productItem)
-        {
-            CartId = cartId;
-            ProductItem = productItem;
-        }
-        public static AddProduct Create(Guid cartId, ProductItem productItem)
-        {
-            if (cartId == Guid.Empty)
-                throw new ArgumentOutOfRangeException(nameof(cartId));
+internal class HandleAddProduct:
+    ICommandHandler<AddProduct>
+{
+    private readonly IRepository<Cart> cartRepository;
+    private readonly IProductPriceCalculator productPriceCalculator;
 
-            return new AddProduct(cartId, productItem);
-        }
+    public HandleAddProduct(
+        IRepository<Cart> cartRepository,
+        IProductPriceCalculator productPriceCalculator
+    )
+    {
+        this.cartRepository = cartRepository;
+        this.productPriceCalculator = productPriceCalculator;
     }
 
-    internal class HandleAddProduct:
-        ICommandHandler<AddProduct>
+    public Task Handle(AddProduct command, CancellationToken cancellationToken)
     {
-        private readonly IRepository<Cart> cartRepository;
-        private readonly IProductPriceCalculator productPriceCalculator;
-
-        public HandleAddProduct(
-            IRepository<Cart> cartRepository,
-            IProductPriceCalculator productPriceCalculator
-        )
-        {
-            this.cartRepository = cartRepository;
-            this.productPriceCalculator = productPriceCalculator;
-        }
-
-        public Task Handle(AddProduct command, CancellationToken cancellationToken)
-        {
-            return cartRepository.GetAndUpdate(
-                command.CartId,
-                cart => cart.AddProduct(productPriceCalculator, command.ProductItem),
-                cancellationToken);
-        }
+        return cartRepository.GetAndUpdate(
+            command.CartId,
+            cart => cart.AddProduct(productPriceCalculator, command.ProductItem),
+            cancellationToken);
     }
 }

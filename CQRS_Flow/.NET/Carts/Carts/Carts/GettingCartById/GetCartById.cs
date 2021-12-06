@@ -6,43 +6,42 @@ using Core.Exceptions;
 using Core.Queries;
 using Nest;
 
-namespace Carts.Carts.GettingCartById
+namespace Carts.Carts.GettingCartById;
+
+public class GetCartById
 {
-    public class GetCartById
+    public Guid CartId { get; }
+
+    private GetCartById(Guid cartId)
     {
-        public Guid CartId { get; }
-
-        private GetCartById(Guid cartId)
-        {
-            CartId = cartId;
-        }
-
-        public static GetCartById Create(Guid cartId)
-        {
-            if (cartId == Guid.Empty)
-                throw new ArgumentOutOfRangeException(nameof(cartId));
-
-            return new GetCartById(cartId);
-        }
+        CartId = cartId;
     }
 
-    internal class HandleGetCartById :
-        IQueryHandler<GetCartById, CartDetails>
+    public static GetCartById Create(Guid cartId)
     {
-        private readonly IElasticClient elasticClient;
+        if (cartId == Guid.Empty)
+            throw new ArgumentOutOfRangeException(nameof(cartId));
 
-        public HandleGetCartById(IElasticClient elasticClient)
-        {
-            this.elasticClient = elasticClient;
-        }
+        return new GetCartById(cartId);
+    }
+}
 
-        public async Task<CartDetails> Handle(GetCartById request, CancellationToken cancellationToken)
-        {
-            var result = await elasticClient.GetAsync<CartDetails>(request.CartId,
-                c => c.Index(IndexNameMapper.ToIndexName<CartDetails>()),
-                ct: cancellationToken);
+internal class HandleGetCartById :
+    IQueryHandler<GetCartById, CartDetails>
+{
+    private readonly IElasticClient elasticClient;
 
-            return result?.Source ?? throw AggregateNotFoundException.For<Cart>(request.CartId);
-        }
+    public HandleGetCartById(IElasticClient elasticClient)
+    {
+        this.elasticClient = elasticClient;
+    }
+
+    public async Task<CartDetails> Handle(GetCartById request, CancellationToken cancellationToken)
+    {
+        var result = await elasticClient.GetAsync<CartDetails>(request.CartId,
+            c => c.Index(IndexNameMapper.ToIndexName<CartDetails>()),
+            ct: cancellationToken);
+
+        return result?.Source ?? throw AggregateNotFoundException.For<Cart>(request.CartId);
     }
 }
