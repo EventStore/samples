@@ -1,63 +1,60 @@
 using System.Security.Cryptography;
 using CryptoShredding.Repository;
 
-namespace CryptoShredding.Serialization
+namespace CryptoShredding.Serialization;
+
+public class EncryptorDecryptor
 {
-    public class EncryptorDecryptor
+    private readonly CryptoRepository _cryptoRepository;
+
+    public EncryptorDecryptor(CryptoRepository cryptoRepository)
     {
-        private readonly CryptoRepository _cryptoRepository;
+        _cryptoRepository = cryptoRepository;
+    }
+        
+    public ICryptoTransform GetEncryptor(string dataSubjectId)
+    {
+        var encryptionKey = _cryptoRepository.GetExistingOrNew(dataSubjectId, CreateNewEncryptionKey);
+        var aesManaged = GetAesManaged(encryptionKey);
+        var encryptor = aesManaged.CreateEncryptor();
+        return encryptor;
+    }
 
-        public EncryptorDecryptor(CryptoRepository cryptoRepository)
+    public ICryptoTransform GetDecryptor(string dataSubjectId)
+    {
+        var encryptionKey = _cryptoRepository.GetExistingOrDefault(dataSubjectId);
+        if (encryptionKey is null)
         {
-            _cryptoRepository = cryptoRepository;
+            // encryption key was deleted
+            return default;
         }
+            
+        var aesManaged = GetAesManaged(encryptionKey);
+        var decryptor = aesManaged.CreateDecryptor();
+        return decryptor;
+    }
         
-        public ICryptoTransform GetEncryptor(string dataSubjectId)
-        {
-            var encryptionKey = _cryptoRepository.GetExistingOrNew(dataSubjectId, CreateNewEncryptionKey);
-            var aesManaged = GetAesManaged(encryptionKey);
-            var encryptor = aesManaged.CreateEncryptor();
-            return encryptor;
-        }
+    private EncryptionKey CreateNewEncryptionKey()
+    {
+        var aes = Aes.Create();
 
-        public ICryptoTransform GetDecryptor(string dataSubjectId)
-        {
-            var encryptionKey = _cryptoRepository.GetExistingOrDefault(dataSubjectId);
-            if (encryptionKey is null)
-            {
-                // encryption key was deleted
-                return default;
-            }
-            
-            var aesManaged = GetAesManaged(encryptionKey);
-            var decryptor = aesManaged.CreateDecryptor();
-            return decryptor;
-        }
+        aes.Padding = PaddingMode.PKCS7;
         
-        private EncryptionKey CreateNewEncryptionKey()
-        {
-            var aesManaged =
-                new AesManaged
-                {
-                    Padding = PaddingMode.PKCS7
-                };
-            var key = aesManaged.Key;
-            var nonce = aesManaged.IV;
-            var encryptionKey = new EncryptionKey(key, nonce);
-            return encryptionKey;
-        }
+        var key = aes.Key;
+        var nonce = aes.IV;
         
-        private AesManaged GetAesManaged(EncryptionKey encryptionKey)
-        {
-            var aesManaged =
-                new AesManaged
-                {
-                    Padding = PaddingMode.PKCS7,
-                    Key = encryptionKey.Key,
-                    IV = encryptionKey.Nonce
-                };
-            
-            return aesManaged;
-        }
+        var encryptionKey = new EncryptionKey(key, nonce);
+        return encryptionKey;
+    }
+        
+    private Aes GetAesManaged(EncryptionKey encryptionKey)
+    {
+        var aes = Aes.Create();
+
+        aes.Padding = PaddingMode.PKCS7;
+        aes.Key = encryptionKey.Key;
+        aes.IV = encryptionKey.Nonce;
+
+        return aes;
     }
 }
