@@ -3,30 +3,29 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 
-namespace Core.ElasticSearch
+namespace Core.ElasticSearch;
+
+public class ElasticSearchConfig
 {
-    public class ElasticSearchConfig
-    {
-        public string Url { get; set; } = default!;
-        public string DefaultIndex { get; set; } = default!;
-    }
+    public string Url { get; set; } = default!;
+    public string DefaultIndex { get; set; } = default!;
+}
     
-    public static class ElasticSearchConfigExtensions
+public static class ElasticSearchConfigExtensions
+{
+    private const string DefaultConfigKey = "ElasticSearch";
+    public static void AddElasticsearch(
+        this IServiceCollection services, IConfiguration configuration, Action<ConnectionSettings>? config = null)
     {
-        private const string DefaultConfigKey = "ElasticSearch";
-        public static void AddElasticsearch(
-            this IServiceCollection services, IConfiguration configuration, Action<ConnectionSettings>? config = null)
-        {
-            var elasticSearchConfig = configuration.GetSection(DefaultConfigKey).Get<ElasticSearchConfig>();
+        var elasticSearchConfig = configuration.GetSection(DefaultConfigKey).Get<ElasticSearchConfig>();
             
-            var settings = new ConnectionSettings(new Uri(elasticSearchConfig.Url))
-                .DefaultIndex(elasticSearchConfig.DefaultIndex);
+        var settings = new ConnectionSettings(new Uri(elasticSearchConfig.Url))
+            .DefaultIndex(elasticSearchConfig.DefaultIndex);
 
-            config?.Invoke(settings);
+        config?.Invoke(settings);
 
-            var client = new ElasticClient(settings);
+        var client = new ElasticClient(settings);
 
-            services.AddSingleton<IElasticClient>(client);
-        }
+        services.AddSingleton<IElasticClient>(client);
     }
 }

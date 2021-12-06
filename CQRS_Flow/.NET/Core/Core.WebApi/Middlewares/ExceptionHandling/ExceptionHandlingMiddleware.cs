@@ -4,43 +4,42 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Core.WebApi.Middlewares.ExceptionHandling
+namespace Core.WebApi.Middlewares.ExceptionHandling;
+
+public class ExceptionHandlingMiddleware
 {
-    public class ExceptionHandlingMiddleware
+    private readonly RequestDelegate next;
+
+    private readonly ILogger logger;
+
+    public ExceptionHandlingMiddleware(RequestDelegate next,
+        ILoggerFactory loggerFactory)
     {
-        private readonly RequestDelegate next;
+        this.next = next;
+        logger = loggerFactory.CreateLogger<ExceptionHandlingMiddleware>();
+    }
 
-        private readonly ILogger logger;
-
-        public ExceptionHandlingMiddleware(RequestDelegate next,
-            ILoggerFactory loggerFactory)
+    public async Task Invoke(HttpContext context /* other scoped dependencies */)
+    {
+        try
         {
-            this.next = next;
-            logger = loggerFactory.CreateLogger<ExceptionHandlingMiddleware>();
+            await next(context);
         }
-
-        public async Task Invoke(HttpContext context /* other scoped dependencies */)
+        catch (Exception ex)
         {
-            try
-            {
-                await next(context);
-            }
-            catch (Exception ex)
-            {
-                await HandleExceptionAsync(context, ex);
-            }
+            await HandleExceptionAsync(context, ex);
         }
+    }
 
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
-        {
-            logger.LogError(exception, exception.Message);
+    private Task HandleExceptionAsync(HttpContext context, Exception exception)
+    {
+        logger.LogError(exception, exception.Message);
 
-            var codeInfo = ExceptionToHttpStatusMapper.Map(exception);
+        var codeInfo = ExceptionToHttpStatusMapper.Map(exception);
 
-            var result = JsonConvert.SerializeObject(new HttpExceptionWrapper((int)codeInfo.Code, codeInfo.Message));
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)codeInfo.Code;
-            return context.Response.WriteAsync(result);
-        }
+        var result = JsonConvert.SerializeObject(new HttpExceptionWrapper((int)codeInfo.Code, codeInfo.Message));
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)codeInfo.Code;
+        return context.Response.WriteAsync(result);
     }
 }

@@ -1,10 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Core.Queries
+namespace Core.Queries;
+
+public interface IQueryBus
 {
-    public interface IQueryBus
-    {
-        Task<TResponse> Send<TQuery, TResponse>(TQuery query, CancellationToken ct);
-    }
+    Task<TResponse> Send<TQuery, TResponse>(TQuery query, CancellationToken ct);
 }

@@ -1,16 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Core.Queries
+namespace Core.Queries;
+
+public static class Config
 {
-    public static class Config
+    public static IServiceCollection AddQueryHandler<TQuery, TQueryResult, TQueryHandler>(
+        this IServiceCollection services
+    )
+        where TQueryHandler : class, IQueryHandler<TQuery, TQueryResult>
     {
-        public static IServiceCollection AddQueryHandler<TQuery, TQueryResult, TQueryHandler>(
-            this IServiceCollection services
-        )
-            where TQueryHandler : class, IQueryHandler<TQuery, TQueryResult>
-        {
-            return services.AddTransient<TQueryHandler>()
-                .AddTransient<IQueryHandler<TQuery, TQueryResult>>(sp => sp.GetRequiredService<TQueryHandler>());
-        }
+        return services.AddTransient<TQueryHandler>()
+            .AddTransient<IQueryHandler<TQuery, TQueryResult>>(sp => sp.GetRequiredService<TQueryHandler>());
     }
 }

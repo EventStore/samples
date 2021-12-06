@@ -7,50 +7,49 @@ using Core.Exceptions;
 using Core.Queries;
 using EventStore.Client;
 
-namespace Carts.Carts.GettingCartAtVersion
+namespace Carts.Carts.GettingCartAtVersion;
+
+public class GetCartAtVersion
 {
-    public class GetCartAtVersion
+    public Guid CartId { get; }
+    public ulong Version { get; }
+
+    private GetCartAtVersion(Guid cartId, ulong version)
     {
-        public Guid CartId { get; }
-        public ulong Version { get; }
-
-        private GetCartAtVersion(Guid cartId, ulong version)
-        {
-            CartId = cartId;
-            Version = version;
-        }
-
-        public static GetCartAtVersion Create(Guid cartId, ulong version)
-        {
-            if (cartId == Guid.Empty)
-                throw new ArgumentOutOfRangeException(nameof(cartId));
-
-            return new GetCartAtVersion(cartId, version);
-        }
+        CartId = cartId;
+        Version = version;
     }
 
-    internal class HandleGetCartAtVersion :
-        IQueryHandler<GetCartAtVersion, CartDetails>
+    public static GetCartAtVersion Create(Guid cartId, ulong version)
     {
-        private readonly EventStoreClient eventStore;
+        if (cartId == Guid.Empty)
+            throw new ArgumentOutOfRangeException(nameof(cartId));
 
-        public HandleGetCartAtVersion(EventStoreClient eventStore)
-        {
-            this.eventStore = eventStore;
-        }
+        return new GetCartAtVersion(cartId, version);
+    }
+}
 
-        public async Task<CartDetails> Handle(GetCartAtVersion request, CancellationToken cancellationToken)
-        {
-            var cart = await eventStore.AggregateStream<CartDetails>(
-                request.CartId,
-                cancellationToken,
-                request.Version
-            );
+internal class HandleGetCartAtVersion :
+    IQueryHandler<GetCartAtVersion, CartDetails>
+{
+    private readonly EventStoreClient eventStore;
 
-            if (cart == null)
-                throw AggregateNotFoundException.For<Cart>(request.CartId);
+    public HandleGetCartAtVersion(EventStoreClient eventStore)
+    {
+        this.eventStore = eventStore;
+    }
 
-            return cart;
-        }
+    public async Task<CartDetails> Handle(GetCartAtVersion request, CancellationToken cancellationToken)
+    {
+        var cart = await eventStore.AggregateStream<CartDetails>(
+            request.CartId,
+            cancellationToken,
+            request.Version
+        );
+
+        if (cart == null)
+            throw AggregateNotFoundException.For<Cart>(request.CartId);
+
+        return cart;
     }
 }

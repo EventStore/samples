@@ -9,60 +9,59 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
-namespace Carts.Api
+namespace Carts.Api;
+
+public class Startup
 {
-    public class Startup
+    private readonly IConfiguration config;
+
+    public Startup(IConfiguration config)
     {
-        private readonly IConfiguration config;
+        this.config = config;
+    }
 
-        public Startup(IConfiguration config)
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddMvc()
+            .AddNewtonsoftJson(opt => opt.SerializerSettings.Converters.Add(new StringEnumConverter()));
+
+        services.AddControllers();
+
+        services.AddSwaggerGen(c =>
         {
-            this.config = config;
+            c.SwaggerDoc("v1", new OpenApiInfo {Title = "Carts", Version = "v1"});
+        });
+
+        services
+            .AddEventStoreDBSubscriptionToAll("MainSubscription")
+            .AddCoreServices()
+            .AddCartsModule(config);
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        app.UseMiddleware(typeof(ExceptionHandlingMiddleware));
+
+        app.UseRouting();
+
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
         {
-            services.AddMvc()
-                .AddNewtonsoftJson(opt => opt.SerializerSettings.Converters.Add(new StringEnumConverter()));
+            endpoints.MapControllers();
+        });
 
-            services.AddControllers();
+        app.UseSwagger();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Carts", Version = "v1"});
-            });
-
-            services
-                .AddEventStoreDBSubscriptionToAll("MainSubscription")
-                .AddCoreServices()
-                .AddCartsModule(config);
-        }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        app.UseSwaggerUI(c =>
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseMiddleware(typeof(ExceptionHandlingMiddleware));
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Carts V1");
-                c.RoutePrefix = string.Empty;
-            });
-        }
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Carts V1");
+            c.RoutePrefix = string.Empty;
+        });
     }
 }
