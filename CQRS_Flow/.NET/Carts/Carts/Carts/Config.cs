@@ -31,7 +31,8 @@ internal static class CartsConfig
 
     private static void AddCommandHandlers(IServiceCollection services)
     {
-        services.AddCommandHandler<InitializeCart, HandleInitializeCart>()
+        services
+            .AddCommandHandler<InitializeCart, HandleInitializeCart>()
             .AddCommandHandler<AddProduct, HandleAddProduct>()
             .AddCommandHandler<RemoveProduct, HandleRemoveProduct>()
             .AddCommandHandler<ConfirmCart, HandleConfirmCart>();

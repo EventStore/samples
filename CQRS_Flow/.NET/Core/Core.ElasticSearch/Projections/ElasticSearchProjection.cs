@@ -27,15 +27,21 @@ public class ElasticSearchProjection<TEvent, TView> : IEventHandler<TEvent>
 
     public async Task Handle(TEvent @event, CancellationToken ct)
     {
-        string id = getId(@event);
+        var id = getId(@event);
 
-        var entity = (await elasticClient.GetAsync<TView>(id, ct: ct))?.Source
-                     ?? (TView) Activator.CreateInstance(typeof(TView), true)!;
+        var entity = (await elasticClient.GetAsync<TView>(id, i => i.Index(IndexNameMapper.ToIndexName<TView>()), ct))?.Source;
+
+        if (entity == null)
+        {
+            entity  = (TView) Activator.CreateInstance(typeof(TView), true)!;
+        }
+
 
         entity.When(@event);
 
-        await elasticClient.UpdateAsync<TView>(id,
-            u => u.Doc(entity).Upsert(entity).Index(IndexNameMapper.ToIndexName<TView>()),
+        await elasticClient.IndexAsync(
+            entity,
+            i => i.Index(IndexNameMapper.ToIndexName<TView>()).Id(id),
             ct
         );
     }

@@ -13,14 +13,19 @@ public class EventBus: IEventBus
     private readonly IServiceProvider serviceProvider;
     private static readonly ConcurrentDictionary<Type, MethodInfo> PublishMethods = new();
 
-    public EventBus(IServiceProvider serviceProvider)
+    public EventBus(
+        IServiceProvider serviceProvider
+    )
     {
         this.serviceProvider = serviceProvider;
     }
 
     public async Task Publish<TEvent>(TEvent @event, CancellationToken ct)
     {
-        var eventHandlers = serviceProvider.GetServices<IEventHandler<TEvent>>();
+        using var scope = serviceProvider.CreateScope();
+
+        var eventHandlers =
+            scope.ServiceProvider.GetServices<IEventHandler<TEvent>>();
 
         foreach (var eventHandler in eventHandlers)
         {
@@ -31,7 +36,7 @@ public class EventBus: IEventBus
     public Task Publish(object @event, CancellationToken ct)
     {
         return (Task)GetGenericPublishFor(@event)
-            .Invoke(this, new[] {@event, ct})!;
+            .Invoke(this, new[] { @event, ct })!;
     }
 
     private static MethodInfo GetGenericPublishFor(object @event)

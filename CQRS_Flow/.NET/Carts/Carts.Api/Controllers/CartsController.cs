@@ -69,24 +69,27 @@ public class CartsController: Controller
         return Ok();
     }
 
-    [HttpDelete("{id}/products")]
-    public async Task<IActionResult> RemoveProduct(Guid id, [FromBody] RemoveProductRequest? request, CancellationToken ct)
+    [HttpDelete("{id}/products/{productId}")]
+    public async Task<IActionResult> RemoveProduct(
+        Guid id,
+        [FromRoute]Guid? productId,
+        [FromQuery]int? quantity,
+        [FromQuery]decimal? unitPrice,
+        CancellationToken ct
+    )
     {
-        if (request == null)
-            throw new ArgumentNullException(nameof(request));
-
         var command = Carts.RemovingProduct.RemoveProduct.Create(
             id,
             PricedProductItem.Create(
-                request.ProductItem?.ProductId,
-                request.ProductItem?.Quantity,
-                request.ProductItem?.UnitPrice
+                productId,
+                quantity,
+                unitPrice
             )
         );
 
         await commandBus.Send(command, ct);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut("{id}/confirmation")]

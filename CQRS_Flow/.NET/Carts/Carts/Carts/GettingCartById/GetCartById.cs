@@ -40,7 +40,7 @@ internal class HandleGetCartById :
     {
         var result = await elasticClient.GetAsync<CartDetails>(request.CartId,
             c => c.Index(IndexNameMapper.ToIndexName<CartDetails>()),
-            ct: cancellationToken);
+            cancellationToken);
 
         return result?.Source ?? throw AggregateNotFoundException.For<Cart>(request.CartId);
     }
