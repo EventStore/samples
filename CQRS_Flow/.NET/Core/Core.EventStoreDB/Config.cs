@@ -1,4 +1,4 @@
-using System;
+using Core.BackgroundWorkers;
 using Core.EventStoreDB.Subscriptions;
 using EventStore.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,12 +36,8 @@ public static class EventStoreDBConfigExtensions
         return services;
     }
 
-    public static IServiceCollection AddEventStoreDBSubscriptionToAll(
-        this IServiceCollection services,
-        string subscriptionId,
-        SubscriptionFilterOptions? filterOptions = null,
-        Action<EventStoreClientOperationOptions>? configureOperation = null,
-        UserCredentials? credentials = null,
+    public static IServiceCollection AddEventStoreDBSubscriptionToAll(this IServiceCollection services,
+        EventStoreDBSubscriptionToAllOptions? subscriptionOptions = null,
         bool checkpointToEventStoreDB = true)
     {
         if (checkpointToEventStoreDB)
@@ -51,16 +47,22 @@ public static class EventStoreDBConfigExtensions
         }
 
         return services.AddHostedService(serviceProvider =>
-            new SubscribeToAllBackgroundWorker(
-                serviceProvider,
-                serviceProvider.GetRequiredService<EventStoreClient>(),
-                serviceProvider.GetRequiredService<ISubscriptionCheckpointRepository>(),
-                serviceProvider.GetRequiredService<ILogger<SubscribeToAllBackgroundWorker>>(),
-                subscriptionId,
-                filterOptions,
-                configureOperation,
-                credentials
-            )
+            {
+                var logger =
+                    serviceProvider.GetRequiredService<ILogger<BackgroundWorker>>();
+
+                var eventStoreDBSubscriptionToAll =
+                    serviceProvider.GetRequiredService<EventStoreDBSubscriptionToAll>();
+
+                return new BackgroundWorker(
+                    logger,
+                    ct =>
+                        eventStoreDBSubscriptionToAll.SubscribeToAll(
+                            subscriptionOptions ?? new EventStoreDBSubscriptionToAllOptions(),
+                            ct
+                        )
+                );
+            }
         );
     }
 }

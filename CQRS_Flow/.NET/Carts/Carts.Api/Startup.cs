@@ -33,7 +33,7 @@ public class Startup
         });
 
         services
-            .AddEventStoreDBSubscriptionToAll("MainSubscription")
+            .AddEventStoreDBSubscriptionToAll()
             .AddCoreServices()
             .AddCartsModule(config);
     }
