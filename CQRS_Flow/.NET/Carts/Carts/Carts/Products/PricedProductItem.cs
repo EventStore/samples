@@ -13,7 +13,7 @@ public class PricedProductItem
     public decimal TotalPrice => Quantity * UnitPrice;
     public ProductItem ProductItem { get; }
 
-    private PricedProductItem(ProductItem productItem, decimal unitPrice)
+    public PricedProductItem(ProductItem productItem, decimal unitPrice)
     {
         ProductItem = productItem;
         UnitPrice = unitPrice;

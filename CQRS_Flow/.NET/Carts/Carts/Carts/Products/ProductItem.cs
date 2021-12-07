@@ -8,7 +8,7 @@ public class ProductItem
 
     public int Quantity { get; }
 
-    private ProductItem(Guid productId, int quantity)
+    public ProductItem(Guid productId, int quantity)
     {
         ProductId = productId;
         Quantity = quantity;

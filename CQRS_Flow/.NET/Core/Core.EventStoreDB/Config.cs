@@ -25,7 +25,8 @@ public static class EventStoreDBConfigExtensions
         var eventStoreDBConfig = config.GetSection(DefaultConfigKey).Get<EventStoreDBConfig>();
 
         services.AddSingleton(
-            new EventStoreClient(EventStoreClientSettings.Create(eventStoreDBConfig.ConnectionString)));
+                new EventStoreClient(EventStoreClientSettings.Create(eventStoreDBConfig.ConnectionString)))
+            .AddTransient<EventStoreDBSubscriptionToAll, EventStoreDBSubscriptionToAll>();
 
         if (options?.UseInternalCheckpointing != false)
         {

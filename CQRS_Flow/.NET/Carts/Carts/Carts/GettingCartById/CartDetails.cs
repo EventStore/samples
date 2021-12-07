@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Carts.Carts.AddingProduct;
 using Carts.Carts.ConfirmingCart;
 using Carts.Carts.InitializingCart;
@@ -46,8 +47,6 @@ public class CartDetails: IProjection
 
     public void Apply(CartInitialized @event)
     {
-        Version++;
-
         Id = @event.CartId;
         ClientId = @event.ClientId;
         ProductItems = new List<PricedProductItem>();

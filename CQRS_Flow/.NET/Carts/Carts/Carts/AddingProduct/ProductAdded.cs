@@ -9,7 +9,7 @@ public class ProductAdded
 
     public PricedProductItem ProductItem { get; }
 
-    private ProductAdded(Guid cartId, PricedProductItem productItem)
+    public ProductAdded(Guid cartId, PricedProductItem productItem)
     {
         CartId = cartId;
         ProductItem = productItem;

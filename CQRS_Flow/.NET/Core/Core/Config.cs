@@ -15,7 +15,7 @@ public static class Config
             .AddScoped<ICommandBus, CommandBus>()
             .AddScoped<IQueryBus, QueryBus>();
 
-        services.TryAddScoped<IEventBus, EventBus>();
+        services.TryAddSingleton<IEventBus, EventBus>();
         services.TryAddScoped<IIdGenerator, NulloIdGenerator>();
 
         return services;
