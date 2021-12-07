@@ -27,7 +27,7 @@ public class BackgroundWorker: IHostedService
         // Create a linked token so we can trigger cancellation outside of this token's cancellation
         cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-        executingTask = perform(cts.Token);
+        executingTask = Task.Run(() => perform(cts.Token), cancellationToken);
 
         return executingTask;
     }
