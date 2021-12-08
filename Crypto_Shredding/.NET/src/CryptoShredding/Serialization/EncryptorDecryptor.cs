@@ -15,8 +15,8 @@ public class EncryptorDecryptor
     public ICryptoTransform GetEncryptor(string dataSubjectId)
     {
         var encryptionKey = _cryptoRepository.GetExistingOrNew(dataSubjectId, CreateNewEncryptionKey);
-        var aesManaged = GetAesManaged(encryptionKey);
-        var encryptor = aesManaged.CreateEncryptor();
+        var aes = GetAes(encryptionKey);
+        var encryptor = aes.CreateEncryptor();
         return encryptor;
     }
 
@@ -29,8 +29,8 @@ public class EncryptorDecryptor
             return default;
         }
             
-        var aesManaged = GetAesManaged(encryptionKey);
-        var decryptor = aesManaged.CreateDecryptor();
+        var aes = GetAes(encryptionKey);
+        var decryptor = aes.CreateDecryptor();
         return decryptor;
     }
         
@@ -47,7 +47,7 @@ public class EncryptorDecryptor
         return encryptionKey;
     }
         
-    private Aes GetAesManaged(EncryptionKey encryptionKey)
+    private Aes GetAes(EncryptionKey encryptionKey)
     {
         var aes = Aes.Create();
 
