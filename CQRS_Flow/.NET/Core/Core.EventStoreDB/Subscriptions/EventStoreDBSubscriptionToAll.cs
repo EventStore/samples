@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Events;
+using Core.EventStoreDB.Events;
 using Core.EventStoreDB.Serialization;
 using Core.Threading;
 using EventStore.Client;
@@ -18,8 +19,8 @@ public class EventStoreDBSubscriptionToAllOptions
 
     public Action<EventStoreClientOperationOptions>? ConfigureOperation { get; set; }
     public UserCredentials? Credentials { get; set; }
-
     public bool ResolveLinkTos { get; set; }
+    public bool IgnoreDeserializationErrors { get; set; } = true;
 }
 
 public class EventStoreDBSubscriptionToAll
@@ -92,8 +93,25 @@ public class EventStoreDBSubscriptionToAll
         {
             if (IsEventWithEmptyData(resolvedEvent) || IsCheckpointEvent(resolvedEvent)) return;
 
+            var streamEvent = resolvedEvent.ToStreamEvent();
+
+            if (streamEvent == null)
+            {
+                // that can happen if we're sharing database between modules
+                // if we're subscribing to all then we might get events that are from other module
+                //  and we might not be able to deserialize them
+                logger.LogWarning("Couldn't deserialize event with id: {EventId}", resolvedEvent.Event.EventId);
+
+                if (!subscriptionOptions.IgnoreDeserializationErrors)
+                    throw new InvalidOperationException(
+                        $"Unable to deserialize event {resolvedEvent.Event.EventType} with id: {resolvedEvent.Event.EventId}"
+                    );
+
+                return;
+            }
+
             // publish event to internal event bus
-            await eventBus.Publish(resolvedEvent.Deserialize(), ct);
+            await eventBus.Publish(streamEvent, ct);
 
             await checkpointRepository.Store(SubscriptionId, resolvedEvent.Event.Position.CommitPosition, ct);
         }
@@ -101,6 +119,7 @@ public class EventStoreDBSubscriptionToAll
         {
             logger.LogError("Error consuming message: {ExceptionMessage}{ExceptionStackTrace}", e.Message,
                 e.StackTrace);
+            throw;
         }
     }
 

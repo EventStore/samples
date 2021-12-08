@@ -78,7 +78,7 @@ public class RemoveProductTests: IClassFixture<RemoveProductFixture>
 
         //send query
         var queryResponse = await fixture.Get(query, 30,
-            check: async response => (await response.GetResultFromJson<CartDetails>()).Version == 1);
+            check: async response => (await response.GetResultFromJson<CartDetails>()).Version == 2);
 
         queryResponse.EnsureSuccessStatusCode();
 
