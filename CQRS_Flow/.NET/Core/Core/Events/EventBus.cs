@@ -22,6 +22,7 @@ public class EventBus: IEventBus
 
     private async Task Publish<TEvent>(TEvent @event, CancellationToken ct)
     {
+        // You can consider adding here a retry policy for event handling
         using var scope = serviceProvider.CreateScope();
 
         var eventHandlers =

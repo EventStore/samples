@@ -41,17 +41,17 @@ It uses:
 
 ## Read Model
 - Read models are rebuilt with eventual consistency using subscribe to all EventStoreDB feature,
-- Added hosted service [SubscribeToAllBackgroundWorker](./Core/Core.EventStoreDB/Subscriptions/SubscribeToAllBackgroundWorker.cs) to handle subscribing to all. It handles checkpointing and simple retries if the connection was dropped.
+- Added class to manage subscriptions: [EventStoreDBSubscriptionToAll](./Core/Core.EventStoreDB/Subscriptions/EventStoreDBSubscriptionToAll.cs) to handle subscribing to all. It handles checkpointing and simple retries if the connection was dropped. It's run inside the [BackgroundWorker](./Core/Core/BackgroundWorkers/BackgroundWorker.cs) that provides the abstraction for starting and disposing hosted service.
 - Added [ISubscriptionCheckpointRepository](./Core/Core.EventStoreDB/Subscriptions/ISubscriptionCheckpointRepository.cs) for handling Subscription checkpointing.
 - Added checkpointing to EventStoreDB stream with [EventStoreDBSubscriptionCheckpointRepository](./Core/Core.EventStoreDB/Subscriptions/EventStoreDBSubscriptionCheckpointRepository.cs) and dummy in-memory checkpointer [InMemorySubscriptionCheckpointRepository](./Core/Core.EventStoreDB/Subscriptions/InMemorySubscriptionCheckpointRepository.cs),
-- Added [ElasticSearchProjection](./Core/Core.ElasticSearch/Projections/ElasticSearchProjection.cs) as a sample how to project with [`left-fold`](https://en.wikipedia.org/wiki/Fold_(higher-order_function)) into external storage. Another (e.g. MongoDB, EntityFramework) can be implemented the same way.
+- Added [ElasticSearchProjection](./Core/Core.ElasticSearch/Projections/ElasticSearchProjection.cs) as a sample how to project with [`left-fold`](https://en.wikipedia.org/wiki/Fold_(higher-order_function)) into external storage. It supports idempotency through "external version" ElasticSearch mechanism. Another (e.g. MongoDB, EntityFramework) can be implemented the same way.
 
 ## Tests
 - Added sample of unit testing in [`Carts.Tests`](./Carts/Carts.Tests):
   - [Aggregate unit tests](./Carts/Carts.Tests/Carts/InitializingCart/InitializeCartTests.cs)
   - [Command handler unit tests](./Carts/Carts.Tests/Carts/InitializingCart/InitializeCartCommandHandlerTests.cs)
 - Added sample of integration testing in [`Carts.Api.Tests`](./Carts/Carts.Api.Tests)
-  - [API acceptance tests](./Carts/Carts.Api.Tests/Carts/InitializingCart/InitializeCartTests.cs)
+  - [API acceptance tests](./Carts/Carts.Api.Tests/Carts/)
 
 ## Other
 - [EventTypeMapper](./Core/Core/Events/EventTypeMapper.cs) class to allow both convention-based mapping (by the .NET type name) and custom to handle event versioning,
