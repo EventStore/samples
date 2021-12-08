@@ -16,6 +16,11 @@ EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoShredding.IntegrationTests", "src\CryptoShredding.IntegrationTests\CryptoShredding.IntegrationTests.csproj", "{FA1C5197-1F19-4EB6-825C-08BB380283AB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{A6E8B7C5-D5F7-4F9E-8EDD-020FEF6D18CD}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\.github\workflows\build.crypto_shredding.dotnet.yml = ..\..\.github\workflows\build.crypto_shredding.dotnet.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
