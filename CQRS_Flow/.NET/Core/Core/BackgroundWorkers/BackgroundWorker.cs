@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.BackgroundWorkers;
 
-public class BackgroundWorker: IHostedService
+public class BackgroundWorker: IHostedService, IDisposable
 {
     private Task? executingTask;
     private CancellationTokenSource? cts;
@@ -48,5 +48,10 @@ public class BackgroundWorker: IHostedService
         cancellationToken.ThrowIfCancellationRequested();
 
         logger.LogInformation("Background worker stopped");
+    }
+
+    public void Dispose()
+    {
+        cts?.Dispose();
     }
 }

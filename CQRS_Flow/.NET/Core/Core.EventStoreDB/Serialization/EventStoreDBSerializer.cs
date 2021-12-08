@@ -7,15 +7,18 @@ namespace Core.EventStoreDB.Serialization;
 
 public static class EventStoreDBSerializer
 {
-    public static T Deserialize<T>(this ResolvedEvent resolvedEvent) => (T)Deserialize(resolvedEvent);
+    public static T? Deserialize<T>(this ResolvedEvent resolvedEvent) where T : class =>
+        Deserialize(resolvedEvent) as T;
 
-    public static object Deserialize(this ResolvedEvent resolvedEvent)
+    public static object? Deserialize(this ResolvedEvent resolvedEvent)
     {
         // get type
         var eventType = EventTypeMapper.ToType(resolvedEvent.Event.EventType);
 
-        // deserialize event
-        return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(resolvedEvent.Event.Data.Span), eventType!)!;
+        return eventType != null
+            // deserialize event
+            ? JsonConvert.DeserializeObject(Encoding.UTF8.GetString(resolvedEvent.Event.Data.Span), eventType)
+            : null;
     }
 
     public static EventData ToJsonEventData(this object @event) =>

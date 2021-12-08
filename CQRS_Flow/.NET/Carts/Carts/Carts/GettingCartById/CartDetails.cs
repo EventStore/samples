@@ -25,7 +25,6 @@ public class CartDetails: IProjection
 
     public int Version { get; set; }
 
-
     public void When(object @event)
     {
         switch (@event)
@@ -51,6 +50,7 @@ public class CartDetails: IProjection
         ClientId = @event.ClientId;
         ProductItems = new List<PricedProductItem>();
         Status = @event.CartStatus;
+        Version = 0;
     }
 
     public void Apply(ProductAdded @event)

@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using Core.ElasticSearch.Indices;
 using Core.Events;
 using Core.Projections;
+using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 
 namespace Core.ElasticSearch.Projections;
 
-public class ElasticSearchProjection<TEvent, TView> : IEventHandler<TEvent>
+public class ElasticSearchProjection<TEvent, TView> : IEventHandler<StreamEvent<TEvent>>
     where TView : class, IProjection
     where TEvent : notnull
 {
@@ -25,23 +26,19 @@ public class ElasticSearchProjection<TEvent, TView> : IEventHandler<TEvent>
         this.getId = getId ?? throw new ArgumentNullException(nameof(getId));
     }
 
-    public async Task Handle(TEvent @event, CancellationToken ct)
+    public async Task Handle(StreamEvent<TEvent> @event, CancellationToken ct)
     {
-        var id = getId(@event);
+        var id = getId(@event.Data);
+        var indexName = IndexNameMapper.ToIndexName<TView>();
 
-        var entity = (await elasticClient.GetAsync<TView>(id, i => i.Index(IndexNameMapper.ToIndexName<TView>()), ct))?.Source;
+        var entity = (await elasticClient.GetAsync<TView>(id, i => i.Index(indexName), ct))?.Source ??
+                     (TView) Activator.CreateInstance(typeof(TView), true)!;
 
-        if (entity == null)
-        {
-            entity  = (TView) Activator.CreateInstance(typeof(TView), true)!;
-        }
-
-
-        entity.When(@event);
+        entity.When(@event.Data);
 
         await elasticClient.IndexAsync(
             entity,
-            i => i.Index(IndexNameMapper.ToIndexName<TView>()).Id(id),
+            i => i.Index(indexName).Id(id).VersionType(VersionType.External).Version((long)@event.Metadata.StreamRevision),
             ct
         );
     }
@@ -54,7 +51,7 @@ public static class ElasticSearchProjectionConfig
         where TView : class, IProjection
         where TEvent : notnull
     {
-        services.AddTransient<IEventHandler<TEvent>>(sp =>
+        services.AddTransient<IEventHandler<StreamEvent<TEvent>>>(sp =>
         {
             var session = sp.GetRequiredService<IElasticClient>();
 

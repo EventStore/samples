@@ -20,7 +20,7 @@ public class EventBus: IEventBus
         this.serviceProvider = serviceProvider;
     }
 
-    public async Task Publish<TEvent>(TEvent @event, CancellationToken ct)
+    private async Task Publish<TEvent>(TEvent @event, CancellationToken ct)
     {
         using var scope = serviceProvider.CreateScope();
 
@@ -43,7 +43,7 @@ public class EventBus: IEventBus
     {
         return PublishMethods.GetOrAdd(@event.GetType(), eventType =>
             typeof(EventBus)
-                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
                 .Single(m => m.Name == nameof(Publish) && m.GetGenericArguments().Any())
                 .MakeGenericMethod(eventType)
         );
