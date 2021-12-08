@@ -97,9 +97,11 @@ public class EventStoreDBSubscriptionToAll
 
             if (streamEvent == null)
             {
-                // that can happen if we're sharing database between modules
-                // if we're subscribing to all then we might get events that are from other module
-                //  and we might not be able to deserialize them
+                // That can happen if we're sharing database between modules.
+                // If we're subscribing to all and not filtering out events from other modules,
+                // then we might get events that are from other module and we might not be able to deserialize them.
+                // In that case it's safe to ignore deserialization error.
+                // You may add more sophisticated logic checking if it should be ignored or not.
                 logger.LogWarning("Couldn't deserialize event with id: {EventId}", resolvedEvent.Event.EventId);
 
                 if (!subscriptionOptions.IgnoreDeserializationErrors)
@@ -119,6 +121,8 @@ public class EventStoreDBSubscriptionToAll
         {
             logger.LogError("Error consuming message: {ExceptionMessage}{ExceptionStackTrace}", e.Message,
                 e.StackTrace);
+            // if you're fine with dropping some events instead of stopping subscription
+            // then you can add some logic if error should be ignored
             throw;
         }
     }
@@ -137,6 +141,8 @@ public class EventStoreDBSubscriptionToAll
 
     private void Resubscribe()
     {
+        // You may consider adding a max resubscribe count if you want to fail process
+        // instead of retrying until database is up
         while (true)
         {
             var resubscribed = false;
@@ -144,6 +150,9 @@ public class EventStoreDBSubscriptionToAll
             {
                 Monitor.Enter(resubscribeLock);
 
+                // No synchronization context is needed to disable synchronization context.
+                // That enables running asynchronous method not causing deadlocks.
+                // As this is a background process then we don't need to have async context here.
                 using (NoSynchronizationContextScope.Enter())
                 {
                     SubscribeToAll(subscriptionOptions, cancellationToken).Wait(cancellationToken);
@@ -165,7 +174,9 @@ public class EventStoreDBSubscriptionToAll
             if (resubscribed)
                 break;
 
-            Thread.Sleep(1000);
+            // Sleep between reconnections to not flood the database or not kill the CPU with infinite loop
+            // Randomness added to reduce the chance of multiple subscriptions trying to reconnect at the same time
+            Thread.Sleep(1000 + new Random((int)DateTime.UtcNow.Ticks).Next(1000));
         }
     }
 
