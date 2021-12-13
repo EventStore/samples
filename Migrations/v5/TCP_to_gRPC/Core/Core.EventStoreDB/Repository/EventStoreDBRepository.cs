@@ -7,17 +7,17 @@ using Core.Events;
 using Core.EventStoreDB.Events;
 using Core.EventStoreDB.Serialization;
 using Core.Repositories;
-using EventStore.Client;
+using EventStore.ClientAPI;
 
 namespace Core.EventStoreDB.Repository;
 
 public class EventStoreDBRepository<T>: IRepository<T> where T : class, IAggregate
 {
-    private readonly EventStoreClient eventStore;
+    private readonly IEventStoreConnection eventStore;
     private readonly IEventBus eventBus;
 
     public EventStoreDBRepository(
-        EventStoreClient eventStoreDBClient,
+        IEventStoreConnection eventStoreDBClient,
         IEventBus eventBus
     )
     {
@@ -27,10 +27,7 @@ public class EventStoreDBRepository<T>: IRepository<T> where T : class, IAggrega
 
     public Task<T?> Find(Guid id, CancellationToken cancellationToken)
     {
-        return eventStore.AggregateStream<T>(
-            id,
-            cancellationToken
-        );
+        return eventStore.AggregateStream<T>(id);
     }
 
     public Task Add(T aggregate, CancellationToken cancellationToken)
@@ -58,9 +55,8 @@ public class EventStoreDBRepository<T>: IRepository<T> where T : class, IAggrega
         await eventStore.AppendToStreamAsync(
             StreamNameMapper.ToStreamId<T>(aggregate.Id),
             // TODO: Add proper optimistic concurrency handling
-            StreamState.Any,
-            eventsToStore,
-            cancellationToken: cancellationToken
+            ExpectedVersion.Any,
+            eventsToStore
         );
     }
 }

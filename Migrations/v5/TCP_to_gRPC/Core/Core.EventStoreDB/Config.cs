@@ -1,6 +1,10 @@
+using System;
+using System.Threading.Tasks;
 using Core.BackgroundWorkers;
+using Core.EventStoreDB.Connection;
 using Core.EventStoreDB.Subscriptions;
 using EventStore.Client;
+using EventStore.ClientAPI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -10,6 +14,8 @@ namespace Core.EventStoreDB;
 public class EventStoreDBConfig
 {
     public string ConnectionString { get; set; } = default!;
+
+    public string TcpConnectionString { get; set; } = default!;
 }
 
 public record EventStoreDBOptions(
@@ -24,9 +30,24 @@ public static class EventStoreDBConfigExtensions
     {
         var eventStoreDBConfig = config.GetSection(DefaultConfigKey).Get<EventStoreDBConfig>();
 
-        services.AddSingleton(
+        services
+            .AddSingleton(
                 new EventStoreClient(EventStoreClientSettings.Create(eventStoreDBConfig.ConnectionString)))
             .AddTransient<EventStoreDBSubscriptionToAll, EventStoreDBSubscriptionToAll>();
+
+        services.AddSingleton<EventStoreDBConnectionProvider>();
+        services
+            .AddTransient(sp => sp.GetRequiredService<EventStoreDBConnectionProvider>().Connect(eventStoreDBConfig.TcpConnectionString));
+
+        // services
+        //     .AddSingleton(
+        //         new Lazy<Task<IEventStoreConnection>>(async () =>
+        //         {
+        //             var connection = EventStoreConnection.Create(new Uri(eventStoreDBConfig.TcpConnectionString));
+        //             await connection.ConnectAsync();
+        //
+        //             return connection;
+        //         }));
 
         if (options?.UseInternalCheckpointing != false)
         {

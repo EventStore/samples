@@ -5,22 +5,22 @@ using Carts.Carts.GettingCartById;
 using Core.EventStoreDB.Events;
 using Core.Exceptions;
 using Core.Queries;
-using EventStore.Client;
+using EventStore.ClientAPI;
 
 namespace Carts.Carts.GettingCartAtVersion;
 
 public class GetCartAtVersion
 {
     public Guid CartId { get; }
-    public ulong Version { get; }
+    public long Version { get; }
 
-    private GetCartAtVersion(Guid cartId, ulong version)
+    private GetCartAtVersion(Guid cartId, long version)
     {
         CartId = cartId;
         Version = version;
     }
 
-    public static GetCartAtVersion Create(Guid cartId, ulong version)
+    public static GetCartAtVersion Create(Guid cartId, long version)
     {
         if (cartId == Guid.Empty)
             throw new ArgumentOutOfRangeException(nameof(cartId));
@@ -32,9 +32,9 @@ public class GetCartAtVersion
 internal class HandleGetCartAtVersion :
     IQueryHandler<GetCartAtVersion, CartDetails>
 {
-    private readonly EventStoreClient eventStore;
+    private readonly IEventStoreConnection eventStore;
 
-    public HandleGetCartAtVersion(EventStoreClient eventStore)
+    public HandleGetCartAtVersion(IEventStoreConnection eventStore)
     {
         this.eventStore = eventStore;
     }
@@ -43,7 +43,6 @@ internal class HandleGetCartAtVersion :
     {
         var cart = await eventStore.AggregateStream<CartDetails>(
             request.CartId,
-            cancellationToken,
             request.Version
         );
 

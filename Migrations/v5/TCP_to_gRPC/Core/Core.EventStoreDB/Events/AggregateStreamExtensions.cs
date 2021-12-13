@@ -1,44 +1,42 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Events;
 using Core.EventStoreDB.Serialization;
 using Core.Exceptions;
 using Core.Projections;
-using EventStore.Client;
+using EventStore.ClientAPI;
 
 namespace Core.EventStoreDB.Events;
 
 public static class AggregateStreamExtensions
 {
     public static async Task<T?> AggregateStream<T>(
-        this EventStoreClient eventStore,
+        this IEventStoreConnection eventStore,
         Guid id,
-        CancellationToken cancellationToken,
-        ulong? fromVersion = null
+        long? fromVersion = null
     ) where T : class, IProjection
     {
-        var readResult = eventStore.ReadStreamAsync(
-            Direction.Forwards,
+        var readResult = await eventStore.ReadStreamEventsForwardAsync(
             StreamNameMapper.ToStreamId<T>(id),
             fromVersion ?? StreamPosition.Start,
-            cancellationToken: cancellationToken
+            ClientApiConstants.MaxReadSize,
+            false
         );
 
-        var readState = await readResult.ReadState;
-            
-        if(readState == ReadState.StreamNotFound)
+        if(readResult.Status != SliceReadStatus.Success)
             throw AggregateNotFoundException.For<T>(id);
 
-        var aggregate = (T)Activator.CreateInstance(typeof(T), true)!;
+        var entity = (T)Activator.CreateInstance(typeof(T), true)!;
 
-        await foreach (var @event in readResult)
-        {
-            var eventData = @event.Deserialize();
+        return readResult.Events
+            .Select(@event => @event.Deserialize()!)
+            .Aggregate(entity, (state, @event) =>
+            {
+                state.When(@event!);
 
-            aggregate.When(eventData!);
-        }
-
-        return aggregate;
+                return state;
+            });
     }
 }

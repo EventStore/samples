@@ -39,7 +39,7 @@ public class EventStoreDBSubscriptionCheckpointRepository: ISubscriptionCheckpoi
     public async ValueTask Store(string subscriptionId, ulong position, CancellationToken ct)
     {
         var @event = new CheckpointStored(subscriptionId, position, DateTime.UtcNow);
-        var eventToAppend = new[] {@event.ToJsonEventData()};
+        var eventToAppend = new[] {@event.ToGrpcJsonEventData()};
         var streamName = GetCheckpointStreamName(subscriptionId);
 
         try
