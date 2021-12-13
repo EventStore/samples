@@ -34,9 +34,9 @@ internal class HandleGetCartAtVersion :
 {
     private readonly IEventStoreConnection eventStore;
 
-    public HandleGetCartAtVersion(IEventStoreConnection eventStore)
+    public HandleGetCartAtVersion(Func<IEventStoreConnection> connectToEventStore)
     {
-        this.eventStore = eventStore;
+        this.eventStore = connectToEventStore();
     }
 
     public async Task<CartDetails> Handle(GetCartAtVersion request, CancellationToken cancellationToken)

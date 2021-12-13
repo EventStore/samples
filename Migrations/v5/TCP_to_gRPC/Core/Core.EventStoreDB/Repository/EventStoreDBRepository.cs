@@ -17,11 +17,11 @@ public class EventStoreDBRepository<T>: IRepository<T> where T : class, IAggrega
     private readonly IEventBus eventBus;
 
     public EventStoreDBRepository(
-        IEventStoreConnection eventStoreDBClient,
+        Func<IEventStoreConnection> connectToEventStore,
         IEventBus eventBus
     )
     {
-        this.eventStore = eventStoreDBClient ?? throw new ArgumentNullException(nameof(eventStoreDBClient));
+        eventStore = (connectToEventStore ?? throw new ArgumentNullException(nameof(connectToEventStore)))();
         this.eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
     }
 

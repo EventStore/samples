@@ -1,7 +1,7 @@
 ﻿using System;
 using Core.Events;
 using Core.EventStoreDB.Serialization;
-using EventStore.Client;
+using EventStore.ClientAPI;
 
 namespace Core.EventStoreDB.Events;
 
@@ -13,7 +13,7 @@ public static class StreamEventExtensions
         if (eventData == null)
             return null;
 
-        var metaData = new EventMetadata(resolvedEvent.Event.EventNumber.ToUInt64());
+        var metaData = new EventMetadata(resolvedEvent.Event.EventNumber);
         var type = typeof(StreamEvent<>).MakeGenericType(eventData.GetType());
         return (StreamEvent)Activator.CreateInstance(type, eventData, metaData)!;
     }

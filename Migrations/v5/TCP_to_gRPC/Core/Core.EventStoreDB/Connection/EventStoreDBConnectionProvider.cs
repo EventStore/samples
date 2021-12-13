@@ -36,7 +36,7 @@ public class EventStoreDBConnectionProvider
             Monitor.Exit(reconnectLock);
         }
 
-        instance.Closed += (_, _) =>
+        instance.Closed += (sth, args) =>
         {
             Interlocked.Exchange(ref eventStoreDBUri, null);
             Reconnect(uri);

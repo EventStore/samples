@@ -6,14 +6,14 @@ namespace Core.EventStoreDB.Subscriptions;
 
 public class InMemorySubscriptionCheckpointRepository: ISubscriptionCheckpointRepository
 {
-    private readonly ConcurrentDictionary<string, ulong> checkpoints = new();
+    private readonly ConcurrentDictionary<string, long> checkpoints = new();
 
-    public ValueTask<ulong?> Load(string subscriptionId, CancellationToken ct)
+    public ValueTask<long?> Load(string subscriptionId, CancellationToken ct)
     {
         return new(checkpoints.TryGetValue(subscriptionId, out var checkpoint) ? checkpoint : null);
     }
 
-    public ValueTask Store(string subscriptionId, ulong position, CancellationToken ct)
+    public ValueTask Store(string subscriptionId, long position, CancellationToken ct)
     {
         checkpoints.AddOrUpdate(subscriptionId, position,(_, _) => position);
 

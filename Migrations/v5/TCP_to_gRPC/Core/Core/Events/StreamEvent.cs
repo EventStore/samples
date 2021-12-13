@@ -1,7 +1,7 @@
 ﻿namespace Core.Events;
 
 public record EventMetadata(
-    ulong StreamRevision
+    long StreamRevision
 );
 
 public class StreamEvent

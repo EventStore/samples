@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Core.Events;
 using Core.EventStoreDB.Events;
-using Core.EventStoreDB.Serialization;
 using Core.Threading;
-using EventStore.Client;
+using EventStore.ClientAPI;
+using EventStore.ClientAPI.SystemData;
 using Microsoft.Extensions.Logging;
 
 namespace Core.EventStoreDB.Subscriptions;
@@ -13,11 +13,9 @@ namespace Core.EventStoreDB.Subscriptions;
 public class EventStoreDBSubscriptionToAllOptions
 {
     public string SubscriptionId { get; set; } = "default";
-
-    public SubscriptionFilterOptions FilterOptions { get; set; } =
-        new(EventTypeFilter.ExcludeSystemEvents());
-
-    public Action<EventStoreClientOperationOptions>? ConfigureOperation { get; set; }
+    public Filter Filter { get; set; } = Filter.ExcludeSystemEvents;
+    public CatchUpSubscriptionFilteredSettings FilteredSettings { get; set; } =
+        CatchUpSubscriptionFilteredSettings.Default;
     public UserCredentials? Credentials { get; set; }
     public bool ResolveLinkTos { get; set; }
     public bool IgnoreDeserializationErrors { get; set; } = true;
@@ -26,7 +24,7 @@ public class EventStoreDBSubscriptionToAllOptions
 public class EventStoreDBSubscriptionToAll
 {
     private readonly IEventBus eventBus;
-    private readonly EventStoreClient eventStoreClient;
+    private readonly Func<IEventStoreConnection> connectToEventStore;
     private readonly ISubscriptionCheckpointRepository checkpointRepository;
     private readonly ILogger<EventStoreDBSubscriptionToAll> logger;
     private EventStoreDBSubscriptionToAllOptions subscriptionOptions = default!;
@@ -35,14 +33,14 @@ public class EventStoreDBSubscriptionToAll
     private CancellationToken cancellationToken;
 
     public EventStoreDBSubscriptionToAll(
-        EventStoreClient eventStoreClient,
+        Func<IEventStoreConnection> connectToEventStore,
         IEventBus eventBus,
         ISubscriptionCheckpointRepository checkpointRepository,
         ILogger<EventStoreDBSubscriptionToAll> logger
     )
     {
         this.eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-        this.eventStoreClient = eventStoreClient ?? throw new ArgumentNullException(nameof(eventStoreClient));
+        this.connectToEventStore = connectToEventStore ?? throw new ArgumentNullException(nameof(connectToEventStore));
         this.checkpointRepository =
             checkpointRepository ?? throw new ArgumentNullException(nameof(checkpointRepository));
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -57,37 +55,25 @@ public class EventStoreDBSubscriptionToAll
 
         var checkpoint = await checkpointRepository.Load(SubscriptionId, ct);
 
-        if (checkpoint != null)
-        {
-            await eventStoreClient.SubscribeToAllAsync(
-                new Position(checkpoint.Value, checkpoint.Value),
-                HandleEvent,
-                subscriptionOptions.ResolveLinkTos,
-                HandleDrop,
-                subscriptionOptions.FilterOptions,
-                subscriptionOptions.ConfigureOperation,
-                subscriptionOptions.Credentials,
-                ct
-            );
-        }
-        else
-        {
-            await eventStoreClient.SubscribeToAllAsync(
-                HandleEvent,
-                false,
-                HandleDrop,
-                subscriptionOptions.FilterOptions,
-                subscriptionOptions.ConfigureOperation,
-                subscriptionOptions.Credentials,
-                ct
-            );
-        }
+        connectToEventStore().FilteredSubscribeToAllFrom(
+            checkpoint != null? new Position(checkpoint.Value, checkpoint.Value): null,
+            subscriptionOptions.Filter,
+            subscriptionOptions.FilteredSettings,
+            HandleEvent,
+            HandleStart,
+            HandleDrop,
+            subscriptionOptions.Credentials
+        );
 
         logger.LogInformation("Subscription to all '{SubscriptionId}' started", SubscriptionId);
     }
 
-    private async Task HandleEvent(StreamSubscription subscription, ResolvedEvent resolvedEvent,
-        CancellationToken ct)
+    private void HandleStart(EventStoreCatchUpSubscription obj)
+    {
+
+    }
+
+    private async Task HandleEvent(EventStoreCatchUpSubscription eventStoreCatchUpSubscription, ResolvedEvent resolvedEvent)
     {
         try
         {
@@ -113,9 +99,9 @@ public class EventStoreDBSubscriptionToAll
             }
 
             // publish event to internal event bus
-            await eventBus.Publish(streamEvent, ct);
+            await eventBus.Publish(streamEvent, default);
 
-            await checkpointRepository.Store(SubscriptionId, resolvedEvent.Event.Position.CommitPosition, ct);
+            await checkpointRepository.Store(SubscriptionId, resolvedEvent.OriginalPosition!.Value.CommitPosition, default);
         }
         catch (Exception e)
         {
@@ -127,7 +113,7 @@ public class EventStoreDBSubscriptionToAll
         }
     }
 
-    private void HandleDrop(StreamSubscription _, SubscriptionDroppedReason reason, Exception? exception)
+    private void HandleDrop(EventStoreCatchUpSubscription eventStoreCatchUpSubscription, SubscriptionDropReason reason, Exception exception)
     {
         logger.LogError(
             exception,

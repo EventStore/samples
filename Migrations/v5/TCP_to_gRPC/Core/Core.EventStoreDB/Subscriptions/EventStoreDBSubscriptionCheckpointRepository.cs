@@ -3,43 +3,47 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.EventStoreDB.Serialization;
-using EventStore.Client;
+using EventStore.ClientAPI;
+using EventStore.ClientAPI.Exceptions;
 
 namespace Core.EventStoreDB.Subscriptions;
 
-public record CheckpointStored(string SubscriptionId, ulong? Position, DateTime CheckpointedAt);
+public record CheckpointStored(string SubscriptionId, long? Position, DateTime CheckpointedAt);
 
 public class EventStoreDBSubscriptionCheckpointRepository: ISubscriptionCheckpointRepository
 {
-    private readonly EventStoreClient eventStoreClient;
+    private readonly IEventStoreConnection eventStoreClient;
 
     public EventStoreDBSubscriptionCheckpointRepository(
-        EventStoreClient eventStoreClient)
+        Func<IEventStoreConnection> connectToEventStore
+    )
     {
-        this.eventStoreClient = eventStoreClient ?? throw new ArgumentNullException(nameof(eventStoreClient));
+        this.eventStoreClient = (connectToEventStore ?? throw new ArgumentNullException(nameof(connectToEventStore)))();
     }
 
-    public async ValueTask<ulong?> Load(string subscriptionId, CancellationToken ct)
+    public async ValueTask<long?> Load(string subscriptionId, CancellationToken ct)
     {
         var streamName = GetCheckpointStreamName(subscriptionId);
 
-        var result = eventStoreClient.ReadStreamAsync(Direction.Backwards, streamName, StreamPosition.End, 1,
-            cancellationToken: ct);
+        var readResult = await eventStoreClient.ReadStreamEventsBackwardAsync(
+            streamName,
+            StreamPosition.End,
+            1,
+            false
+        );
 
-        if (await result.ReadState == ReadState.StreamNotFound)
-        {
+        if (readResult.Status != SliceReadStatus.Success)
             return null;
-        }
 
-        ResolvedEvent? @event = await result.FirstOrDefaultAsync(ct);
+        ResolvedEvent? @event = readResult.Events.FirstOrDefault();
 
         return @event?.Deserialize<CheckpointStored>()!.Position;
     }
 
-    public async ValueTask Store(string subscriptionId, ulong position, CancellationToken ct)
+    public async ValueTask Store(string subscriptionId, long position, CancellationToken ct)
     {
         var @event = new CheckpointStored(subscriptionId, position, DateTime.UtcNow);
-        var eventToAppend = new[] {@event.ToGrpcJsonEventData()};
+        var eventToAppend = new[] {@event.ToJsonEventData()};
         var streamName = GetCheckpointStreamName(subscriptionId);
 
         try
@@ -47,9 +51,8 @@ public class EventStoreDBSubscriptionCheckpointRepository: ISubscriptionCheckpoi
             // store new checkpoint expecting stream to exist
             await eventStoreClient.AppendToStreamAsync(
                 streamName,
-                StreamState.StreamExists,
-                eventToAppend,
-                cancellationToken: ct
+                ExpectedVersion.StreamExists,
+                eventToAppend
             );
         }
         catch (WrongExpectedVersionException)
@@ -59,17 +62,15 @@ public class EventStoreDBSubscriptionCheckpointRepository: ISubscriptionCheckpoi
             // using stream metadata $maxCount property
             await eventStoreClient.SetStreamMetadataAsync(
                 streamName,
-                StreamState.NoStream,
-                new StreamMetadata(1),
-                cancellationToken: ct
+                ExpectedVersion.NoStream,
+                StreamMetadata.Create(1)
             );
 
             // append event again expecting stream to not exist
             await eventStoreClient.AppendToStreamAsync(
                 streamName,
-                StreamState.NoStream,
-                eventToAppend,
-                cancellationToken: ct
+                ExpectedVersion.NoStream,
+                eventToAppend
             );
         }
     }
