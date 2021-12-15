@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Events;
@@ -17,19 +18,11 @@ public static class AggregateStreamExtensions
         long? fromVersion = null
     ) where T : class, IProjection
     {
-        var readResult = await eventStore.ReadStreamEventsForwardAsync(
-            StreamNameMapper.ToStreamId<T>(id),
-            fromVersion ?? StreamPosition.Start,
-            ClientApiConstants.MaxReadSize,
-            false
-        );
-
-        if(readResult.Status != SliceReadStatus.Success)
-            throw AggregateNotFoundException.For<T>(id);
+        var events = await eventStore.ReadStreamEvents<T>(id, fromVersion);
 
         var entity = (T)Activator.CreateInstance(typeof(T), true)!;
 
-        return readResult.Events
+        return events
             .Select(@event => @event.Deserialize()!)
             .Aggregate(entity, (state, @event) =>
             {
@@ -37,5 +30,31 @@ public static class AggregateStreamExtensions
 
                 return state;
             });
+    }
+
+    public static async Task<IReadOnlyList<ResolvedEvent>> ReadStreamEvents<T>(this IEventStoreConnection eventStore, Guid id, long? fromVersion)
+    {
+        var sliceStart = fromVersion ?? StreamPosition.Start;
+        var events = new List<ResolvedEvent>();
+        StreamEventsSlice slice;
+
+        do
+        {
+            slice = await eventStore.ReadStreamEventsForwardAsync(
+                StreamNameMapper.ToStreamId<T>(id),
+                sliceStart,
+                200,
+                false
+            );
+
+            if (slice.Status != SliceReadStatus.Success)
+                throw AggregateNotFoundException.For<T>(id);
+
+            events.AddRange(slice.Events);
+            sliceStart = slice.NextEventNumber;
+
+        } while (!slice.IsEndOfStream);
+
+        return events;
     }
 }
