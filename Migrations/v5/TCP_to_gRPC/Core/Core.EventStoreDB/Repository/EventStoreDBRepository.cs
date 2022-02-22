@@ -14,7 +14,6 @@ namespace Core.EventStoreDB.Repository;
 public class EventStoreDBRepository<T>: IRepository<T> where T : class, IAggregate
 {
     private readonly IEventStoreConnection eventStore;
-    private readonly IEventBus eventBus;
 
     public EventStoreDBRepository(
         Func<IEventStoreConnection> connectToEventStore,
@@ -22,7 +21,6 @@ public class EventStoreDBRepository<T>: IRepository<T> where T : class, IAggrega
     )
     {
         eventStore = (connectToEventStore ?? throw new ArgumentNullException(nameof(connectToEventStore)))();
-        this.eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
     }
 
     public Task<T?> Find(Guid id, CancellationToken cancellationToken)

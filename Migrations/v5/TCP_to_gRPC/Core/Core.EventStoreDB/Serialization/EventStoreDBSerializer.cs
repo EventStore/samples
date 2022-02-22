@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Text;
 using Core.Events;
+using EventStore.ClientAPI;
 using Newtonsoft.Json;
 
 namespace Core.EventStoreDB.Serialization;
 
 public static class EventStoreDBSerializer
 {
-    public static T? Deserialize<T>(this EventStore.ClientAPI.ResolvedEvent resolvedEvent) where T : class =>
+    public static T? Deserialize<T>(this ResolvedEvent resolvedEvent) where T : class =>
         Deserialize(resolvedEvent) as T;
 
 
-    public static object? Deserialize(this EventStore.ClientAPI.ResolvedEvent resolvedEvent)
+    public static object? Deserialize(this ResolvedEvent resolvedEvent)
     {
         // get type
         var eventType = EventTypeMapper.ToType(resolvedEvent.Event.EventType);
@@ -22,7 +23,7 @@ public static class EventStoreDBSerializer
             : null;
     }
 
-    public static EventStore.ClientAPI.EventData ToJsonEventData(this object @event) =>
+    public static EventData ToJsonEventData(this object @event) =>
         new(
             Guid.NewGuid(),
             EventTypeMapper.ToName(@event.GetType()),
@@ -30,4 +31,17 @@ public static class EventStoreDBSerializer
             Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(@event)),
             Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { }))
         );
+
+public static EventData ToJsonEventData(
+    object @event,
+    string eventType,
+    object? metadata = null
+) =>
+    new EventData(
+        Guid.NewGuid(),
+        eventType,
+        true,
+        Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(@event)),
+        Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(metadata ?? new { }))
+    );
 }

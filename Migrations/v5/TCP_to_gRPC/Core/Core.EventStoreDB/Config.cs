@@ -1,6 +1,8 @@
+using System;
 using Core.BackgroundWorkers;
 using Core.EventStoreDB.Connection;
 using Core.EventStoreDB.Subscriptions;
+using EventStore.ClientAPI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -29,7 +31,7 @@ public static class EventStoreDBConfigExtensions
         services.AddTransient<EventStoreDBSubscriptionToAll, EventStoreDBSubscriptionToAll>();
 
         services.AddSingleton<EventStoreDBConnectionProvider>();
-        services.AddTransient(sp =>
+        services.AddTransient<Func<IEventStoreConnection>>(sp =>
             () => sp.GetRequiredService<EventStoreDBConnectionProvider>()
                 .Connect(eventStoreDBConfig.TcpConnectionString)
         );
