@@ -24,9 +24,10 @@ This sample is showing a  typical flow of the Event Sourcing pattern with [Event
 ## Overview
 
 It uses:
+- .NET TCP client
 - Provides the example of the [Aggregate](./Carts/Carts/Carts/Cart.cs),
 - Stores events to EventStoreDB,
-- Builds read models using [Subscription to `$all`](https://developers.eventstore.com/clients/grpc/subscribing-to-streams/#subscribing-to-all).
+- Builds read models using Subscription to `$all`.
 - Read models are stored as [ElasticSearch](https://www.elastic.co/elasticsearch/) documents.
 - CQRS flow example with Command and Query handling,
 - App has Swagger and predefined [docker-compose](./docker-compose.yml) to run and play with samples.
