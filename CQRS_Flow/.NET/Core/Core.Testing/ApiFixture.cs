@@ -98,6 +98,6 @@ public abstract class ApiFixture: IAsyncLifetime
 
     public Task<HttpResponseMessage> Delete(object request)
     {
-        return Put(string.Empty, request);
+        return Delete(string.Empty, request);
     }
 }
