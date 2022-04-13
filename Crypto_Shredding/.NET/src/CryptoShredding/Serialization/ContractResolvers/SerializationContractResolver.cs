@@ -30,11 +30,10 @@ public class SerializationContractResolver
         foreach (var jsonProperty in properties)
         {
             var isPersonalIdentifiableInformation = IsPersonalIdentifiableInformation(type, jsonProperty);
-            if (isPersonalIdentifiableInformation)
-            {
-                var serializationJsonConverter = new EncryptionJsonConverter(_encryptor, _fieldEncryptionDecryption);
-                jsonProperty.Converter = serializationJsonConverter;
-            }
+            if (!isPersonalIdentifiableInformation) continue;
+            
+            var serializationJsonConverter = new EncryptionJsonConverter(_encryptor, _fieldEncryptionDecryption);
+            jsonProperty.Converter = serializationJsonConverter;
         }
         return properties;
     }
@@ -43,9 +42,8 @@ public class SerializationContractResolver
     {
         var propertyInfo = type.GetProperty(jsonProperty.UnderlyingName);
         if (propertyInfo is null)
-        {
             return false;
-        }
+        
         var hasPersonalDataAttribute =
             propertyInfo.CustomAttributes
                 .Any(x => x.AttributeType == typeof(PersonalDataAttribute));

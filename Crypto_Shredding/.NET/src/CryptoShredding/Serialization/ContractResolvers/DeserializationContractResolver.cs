@@ -28,11 +28,10 @@ public class DeserializationContractResolver
         foreach (var jsonProperty in properties)
         {
             var isSimpleValue = IsSimpleValue(type, jsonProperty);
-            if (isSimpleValue)
-            {
-                var jsonConverter = new DecryptionJsonConverter(_decryptor, _fieldEncryptionDecryption);
-                jsonProperty.Converter = jsonConverter;
-            }
+            if (!isSimpleValue) continue;
+            
+            var jsonConverter = new DecryptionJsonConverter(_decryptor, _fieldEncryptionDecryption);
+            jsonProperty.Converter = jsonConverter;
         }
         return properties;
     }
@@ -41,9 +40,8 @@ public class DeserializationContractResolver
     {
         var propertyInfo = type.GetProperty(jsonProperty.UnderlyingName);
         if (propertyInfo is null)
-        {
             return false;
-        }
+        
         var propertyType = propertyInfo.PropertyType;
         var isSimpleValue = propertyType.IsValueType || propertyType == typeof(string);
         return isSimpleValue;

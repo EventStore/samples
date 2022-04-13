@@ -15,6 +15,38 @@ namespace CryptoShredding.IntegrationTests.EventStoreTests;
 
 public static class GetEventsTests
 {
+    public class ContactAdded: IEvent
+    {
+        public Guid AggregateId { get; set; }
+        
+        [DataSubjectId]
+        public Guid PersonId { get; set; }
+
+        [PersonalData]
+        public string Name { get; set; }
+
+        [PersonalData]
+        public DateTime Birthday { get; set; }
+
+        public Address Address { get; set; } = new Address();
+    }
+
+    public class Address
+    {
+        [PersonalData]
+        public string Street { get; set; }
+        
+        [PersonalData]
+        public int Number { get; set; }
+
+        public string CountryCode { get; set; }
+    }
+
+    public class ContactBookCreated: IEvent
+    {
+        public Guid AggregateId { get; set; }
+    }
+    
     public class Given_A_ContactBookCreated_And_Two_Events_With_Personal_Data_Stored_When_Getting_Events
         : Given_WhenAsync_Then_Test
     {
@@ -269,38 +301,4 @@ public static class GetEventsTests
             _eventStoreClient.Dispose();
         }
     }
-}
-
-public class ContactAdded
-    : IEvent
-{
-    public Guid AggregateId { get; set; }
-        
-    [DataSubjectId]
-    public Guid PersonId { get; set; }
-
-    [PersonalData]
-    public string Name { get; set; }
-
-    [PersonalData]
-    public DateTime Birthday { get; set; }
-
-    public Address Address { get; set; } = new Address();
-}
-
-public class Address
-{
-    [PersonalData]
-    public string Street { get; set; }
-        
-    [PersonalData]
-    public int Number { get; set; }
-
-    public string CountryCode { get; set; }
-}
-
-public class ContactBookCreated
-    : IEvent
-{
-    public Guid AggregateId { get; set; }
 }
