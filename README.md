@@ -4,6 +4,8 @@
 
 This repository provides samples demonstrating the functionalities of [EventStoreDB](https://www.eventstore.com/) and the client SDKs of EventStore and practical usage.
 
+Common operations & usage samples can be found in the [client repositories](https://github.com/EventStore?q=EventStore+Client)
+
 ## Contributing
 
 Feel free to [create a GitHub issue](https://github.com/EventStore/samples/issues/new) if you have any questions or request for more explanation or samples.
