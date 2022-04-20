@@ -28,7 +28,3 @@ Along with direct writers, a set of services have also been implemented for usin
 4. After all services are running and the web ui can be accessed, then run `MockInvoiceGenerator` to start pushing data into EventStore.
 
 As new invoices are created, items are added, payments are made, etc., you can navigate the app to see how each data storage product can indeed hold and present the same information as EventStore.  The item to be observed in each scenario is how EventStore's position vs. each downstream data storage product.
-
-
-* If we need to create client-side tooling: https://stenciljs.com/docs/properties
-* Overall design: https://m3.material.io/
