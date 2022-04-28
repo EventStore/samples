@@ -252,3 +252,6 @@ paket-files/
 *.sln.iml
 
 **/out
+/Logging/Elastic/Filebeat/logs
+/Logging/Elastic/FilebeatWithLogstash/logs
+/Logging/Elastic/Logstash/logs

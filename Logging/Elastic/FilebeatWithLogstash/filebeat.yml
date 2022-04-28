@@ -1,0 +1,15 @@
+#######################################################
+#  EventStoreDB logs file input
+#######################################################
+filebeat.inputs:
+  - type: log
+    paths:
+      - /var/log/eventstore/*/log*.json
+    json.keys_under_root: true
+    json.add_error_key: true
+
+#######################################################
+#  Logstash output to transform and prepare logs
+#######################################################
+output.logstash:
+  hosts: ["logstash:5044"]

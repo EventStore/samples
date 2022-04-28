@@ -1,0 +1,34 @@
+#######################################################
+#  EventStoreDB logs file input
+#######################################################
+filebeat.inputs:
+  - type: log
+    paths:
+      - /var/log/eventstore/*/log*.json
+    json.keys_under_root: true
+    json.add_error_key: true
+
+#######################################################
+#  ElasticSearch direct output
+#######################################################
+output.elasticsearch:
+  index: "eventstoredb-%{[agent.version]}"
+  hosts: ["elasticsearch:9200"]
+
+#######################################################
+#  ElasticSearch dashboard configuration
+#  (index pattern and data view)
+#######################################################
+setup.dashboards:
+  enabled: true
+  index: "eventstoredb-*"
+
+setup.template:
+  name: "eventstoredb"
+  pattern: "eventstoredb-%{[agent.version]}"
+
+#######################################################
+#  Kibana dashboard configuration
+#######################################################
+setup.kibana:
+  host: "kibana:5601"
