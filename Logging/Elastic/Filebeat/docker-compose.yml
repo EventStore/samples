@@ -1,0 +1,143 @@
+###########################################################################
+#  Storing EventStoreDB logs into ElasticSearch with Filebeat
+###########################################################################
+#  DISCLAIMER: This configuration is presented as docker-compose
+#  to simplify the developer environment setup. 
+#  It aims to give the quick option to play with Elastic setup.
+#  It's NOT recommended to run setup through docker-compose on production.
+###########################################################################
+
+version: "3.8"
+services:
+    #######################################################
+    #  EventStoreDB
+    #######################################################
+    eventstoredb:
+        image: eventstore/eventstore:21.10.2-buster-slim
+        container_name: eventstoredb
+        # use this image if you're running ARM-based proc like Apple M1
+        # image: ghcr.io/eventstore/eventstore:21.10.0-alpha-arm64v8
+        environment:
+            - EVENTSTORE_CLUSTER_SIZE=1
+            - EVENTSTORE_RUN_PROJECTIONS=All
+            - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+            - EVENTSTORE_EXT_TCP_PORT=1113
+            - EVENTSTORE_HTTP_PORT=2113
+            - EVENTSTORE_INSECURE=true
+            - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+            - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+        ports:
+            - '1113:1113'
+            - '2113:2113'
+        volumes:
+            -   type: volume
+                source: eventstore-volume-data
+                target: /var/lib/eventstore
+            # external volume to be able to share EventStoreDB logs
+            # with Filebeat image
+            -   type: volume
+                source: eventstore-volume-logs
+                target: /var/log/eventstore
+        networks:
+            - esdb_network
+
+    #######################################################
+    #  Filebeat to harvest logs from event store logs
+    #######################################################
+    filebeat:
+        # required to have a proper access to config file on Windows
+        entrypoint: "filebeat -e -strict.perms=false"
+        container_name: file_beat
+        image: docker.elastic.co/beats/filebeat:8.2.0
+        networks:
+            - es_network
+        # make sure that Filebeat is restarted
+        # in case ElasticSearch or EventStoreDB
+        # were not available yet
+        restart: unless-stopped
+        volumes:
+            # add Filebeat config file
+            - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
+            # get access to EventStoreDB logs through shared external volume
+            -   type: volume
+                source: eventstore-volume-logs
+                target: /var/log/eventstore/
+        depends_on:
+            - eventstoredb
+            - elasticsearch
+            - kibana
+
+
+    #######################################################
+    #  Elastic Search to store logs
+    #######################################################
+    elasticsearch:
+        container_name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
+        environment:
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        volumes:
+            - elastic-data:/usr/share/elasticsearch/data
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+        networks:
+            - es_network
+        healthcheck:
+            test:
+                [
+                "CMD-SHELL",
+                "curl --fail http://localhost:9200 || exit 1",
+                ]
+            interval: 10s
+            timeout: 10s
+            retries: 120
+
+    #######################################################
+    #  Kibana to browse logs
+    #  Filebeat will automatically create Data View for logs
+    #######################################################
+    kibana:
+        container_name: kibana
+        image: docker.elastic.co/kibana/kibana:8.2.0
+        environment:
+            - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+        ports:
+            - "5601:5601"
+        networks:
+            - es_network
+        depends_on:
+            - elasticsearch
+        healthcheck:
+            test:
+                [
+                "CMD-SHELL",
+                "curl --fail http://localhost:5601 || exit 1",
+                ]
+            interval: 10s
+            timeout: 10s
+            retries: 120
+
+networks:
+    es_network:
+        driver: bridge
+    esdb_network:
+        driver: bridge
+
+volumes:
+    eventstore-volume-data:
+    # map logs to disk location
+    eventstore-volume-logs:
+      driver: local
+      driver_opts:
+        o: bind
+        type: none
+        device: ./logs
+    elastic-data:
