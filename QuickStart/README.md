@@ -435,6 +435,7 @@ dotnet run --project .\StreamListener\StreamListener.csproj
 
 **All Stream (listens for changes anywhere within the general ledger)**
 ```PowerShell
+dotnet run --project .\AllStreamListener\AllStreamListener.csproj
 ```
 
 **Stream Writer**
