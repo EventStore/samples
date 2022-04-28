@@ -49,6 +49,10 @@ To start connecting and otherwise interacting with EventStore DB, we're going to
 
 The stream-writer will be a tool with a basic command prompt that will write one or more pre-defined events into EventStore DB.
 
+#### StreamReader ####
+
+The stream-reader will be a tool with a basic command prompt that will read the newly written events from EventStore DB.
+
 #### AllStreamListener ####
 
 This application will listen to the $all stream, which is the global log of all events ever written into EventStore DB.  You can learn more about the $all stream [here](http://tbd/)
