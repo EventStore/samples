@@ -24,8 +24,8 @@ namespace EventStore.StreamConnectors.Kafka {
         private IConsumer<string, byte[]> _consumer;
         private IEventStoreConnection _esConnection;
         private readonly int _readPageSize = 500;
-        CancellationToken _stoppingToken;
         StreamProcessorActivationMonitor _monitor;
+        private CancellationTokenSource _cts = new();
 
         public KafkaStreamListener(IKafkaOptions options, IEventStoreConnection esConnection, ILoggerFactory loggerFactory) {
             Options = options ?? throw new ArgumentNullException(nameof(options));
@@ -38,14 +38,12 @@ namespace EventStore.StreamConnectors.Kafka {
         protected abstract Task InitializeAsync();
 
         protected override async Task ExecuteAsync(CancellationToken token) {
-            _stoppingToken = token;
-
             await InitializeAsync();
             await _monitor.MonitorAsync();
 
             if (_monitor.ShouldBeRunning) {
                 await RunAsync();
-                Log.LogDebug("Observing {@streamName}", Options.Stream);
+                Log.LogDebug("Observing {@streamName}", Options.Topic);
             }
 
             token.Register(async () => await CleanupAsync());
@@ -58,15 +56,24 @@ namespace EventStore.StreamConnectors.Kafka {
                 .Select(x => x.Split("="))
                 .ToDictionary(x => x[0].Trim(), x => x[1].Trim());
             dict.Add("group.id", Options.Group);
-            _consumer = new ConsumerBuilder<string, byte[]>(dict).Build();
-            Log.LogDebug("Consumer has been constructed");
 
-            _consumer.Subscribe(Options.Stream);
             ConsumeResult<string, byte[]> cr = null;
-            while (!_stoppingToken.IsCancellationRequested && _monitor.ShouldBeRunning) {
+            while (!_cts.Token.IsCancellationRequested && _monitor.ShouldBeRunning) {
                 try {
-                    cr = _consumer?.Consume(_stoppingToken);
-                    if (cr == null || _stoppingToken.IsCancellationRequested) return;
+                    if(_consumer == null) {
+                        _consumer = new ConsumerBuilder<string, byte[]>(dict).Build();
+                        _consumer.Subscribe(Options.Topic);
+                        Log.LogDebug("Consumer has been constructed");
+                    }
+
+                    try {
+                        cr = _consumer?.Consume(_cts.Token);
+                    } catch {
+                        _consumer?.Dispose();
+                        _consumer = null;
+                        continue;
+                    }
+                    if (cr == null || _cts.Token.IsCancellationRequested) return;
 
                     var projected = JsonSerializer.Deserialize<ProjectedEvent>(cr.Message.Value);
                     if (string.IsNullOrWhiteSpace(projected?.Data)) continue;
@@ -132,20 +139,27 @@ namespace EventStore.StreamConnectors.Kafka {
                         });
 
                         if (e.Event.EventNumber >= toCheckpoint) {
-                            await UpdateCheckpointAsync(currentSlice.NextEventNumber - 1);
+                            await UpdateCheckpointAsync(currentSlice.NextEventNumber);
                             return;
                         }
                     }
                 }
 
-                await UpdateCheckpointAsync(currentSlice.NextEventNumber - 1);
+                await UpdateCheckpointAsync(currentSlice.NextEventNumber);
             } while ((!currentSlice.IsEndOfStream && remaining != 0) || isCompleted);
         }
 
         public Task PauseAsync() {
+            _cts.Cancel();
+
             State = StreamProcessorStates.Paused;
             _consumer?.Dispose();
             _consumer = null;
+
+            Log.LogDebug("Consumer has been paused: {@ConsumerName}", GetType().Name);
+
+            _cts.TryReset();
+
             return Task.CompletedTask;
         }
 

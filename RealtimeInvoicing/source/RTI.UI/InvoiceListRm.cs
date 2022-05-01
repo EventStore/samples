@@ -31,16 +31,21 @@ namespace RTI.UI {
 
         public InvoiceListRm(IConfiguredConnection conn) : base(nameof(InvoiceListRm), () => conn.GetQueuedListener(nameof(InvoiceListRm))) {
 
+            long? pos = null;
             using (var reader = conn.GetReader(nameof(InvoiceListRm), this)) {
                 WireSubscribers(reader.EventStream);
                 reader.Read<Invoice>();
-                _initialPos = reader.Position;
+                pos = reader.Position;
             }
 
             _listener = conn.GetQueuedListener($"{nameof(InvoiceListRm)}-UI");
             WireSubscribers(_listener.EventStream);
             _listener.Start<Invoice>(_initialPos);
-            _initialPos = 0;
+            _initialPos =  pos == null
+                ? 0
+                : pos == null
+                    ? _listener.Position
+                    : pos;
         }
 
         void WireSubscribers(ISubscriber eventStream) {
@@ -57,6 +62,7 @@ namespace RTI.UI {
         }
 
         public void Handle(InvoiceMsgs.Generated msg) {
+            if (_invoices.Any(inv => inv.Id == msg.Id)) return; // assume duplicate.
             _invoices.Add(new RTI.Models.Invoice {
                 AccountId = msg.AccountId,
                 AccountName = msg.AccountName,

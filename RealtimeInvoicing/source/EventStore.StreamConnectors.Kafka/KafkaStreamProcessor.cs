@@ -100,8 +100,8 @@ namespace EventStore.StreamConnectors.Kafka {
             };
             var bytes = JsonSerializer.SerializeToUtf8Bytes(x);
             var msg = new Message<string, byte[]> { Key = string.Empty, Value = bytes };
-            await _producer.ProduceAsync(_options.Stream, msg);
-            _log.LogDebug("msg: {@x}", x);
+            await _producer.ProduceAsync(_options.Topic, msg);
+            _log.LogDebug("Event Type: {@EventType} - Position: {@Position}", e.Event.EventType, e.Event.EventNumber);
         }
     }
 }

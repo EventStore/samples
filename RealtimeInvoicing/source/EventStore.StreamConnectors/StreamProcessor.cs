@@ -103,7 +103,11 @@ namespace EventStore.StreamConnectors {
                     verboseLogging: false,
                     resolveLinkTos: true,
                     subscriptionName: $"{GetType().Name} => {_options.Stream}"),
-                eventAppeared: async (sub, evt) => { await ProcessAsync(evt); await UpdateCheckpointAsync(evt.OriginalEventNumber); },
+                eventAppeared: async (sub, evt) => { 
+                    await ProcessAsync(evt); 
+                    await UpdateCheckpointAsync(evt.OriginalEventNumber);
+                    Log.LogDebug("Event Type: {@EventType} - Position: {@Position}", evt.Event.EventType, evt.Event.EventNumber);
+                },
                 subscriptionDropped: (sub, reason, exc) => Log.LogWarning(exc, "Subscription dropped because: {@droppedReason}", reason)
             );
         }

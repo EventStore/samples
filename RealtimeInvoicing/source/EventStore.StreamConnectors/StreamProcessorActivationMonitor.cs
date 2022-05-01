@@ -68,7 +68,8 @@ namespace EventStore.StreamConnectors {
                             _logger.LogInformation("Service is already paused.");
                         }
                     }
-                });
+                },
+                subscriptionDropped: (sub, reason, exc) => _logger.LogWarning(exc, "Subscription dropped because: {@droppedReason}", reason));
         }
 
         public void Dispose() {
