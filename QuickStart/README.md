@@ -4,7 +4,9 @@ Welcome to EventStore DB.
 
 This outlines the very basics you need in order to start from nothing to bring an instance of EventStore DB online and using it to move messages through the database.  This QuickStart is geared toward software developers that have knowledge of dotnet core, but have never used EventStore DB before.
 
-## Prerequisites ##
+Throughout this document, Json object serialization is used as part of storing and retrieving event information.  EventStore DB ultimately stores your event information as a byte array, so you are free to use any form of serialization you wish.  We do, however, recommend the use of Json as EventStore DB provides features to work with your streams in a similar fashion to writing Stored Procedures.
+
+# Prerequisites for This Guide #
 
 * [dotnet core v6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 * [Visual Studio Code](https://code.visualstudio.com/download)
@@ -13,11 +15,92 @@ For these purposes, we are using dotnet 6 sdk v6.0.202 and Visual Studio Code: V
 
 EventStore DB will be running from `C:\ESDB`
 
-## Download ##
+# Download and Install EventStore DB #
+## Installation Formats ##
+### X-Copy Deployment ###
+
+X-Copy deployments can be done on the following OS':
+
+* Windows
+* Linux
+
+#### How-to Install ####
 
 EventStore DB can be downloaded from [https://www.eventstore.com/downloads](https://www.eventstore.com/downloads).  You will want to choose the latest version.  For this discussion, we will be using v21.10.2 LTS and will be working on a Windows 11 PC.
 
 Once downloaded, go to your `Downloads` folder (or where-ever your downloads are saved) and look for the *.zip file you have just downloaded.  Right-click and choose `Extract All` from the context menu, choosing `C:\ESDB\`.
+
+#### How-to Run ####
+### Chocolatey ###
+
+[Chocolatey](https://chocolatey.org/) is a utility for installing applications on Microsoft Windows.
+
+#### How-to Install ####
+
+```PowerShell
+choco install eventstore-oss --version=21.10.2
+```
+
+#### How-to Run ####
+### Package Manager ###
+#### Supported OS' ####
+#### How-to Install ####
+#### How-to Run ####
+### Docker Image ###
+#### Supported OS' ####
+#### How-to Install ####
+#### How-to Run ####
+# Example Use-Cases for EventStoreDB #
+## Read and Write Streams ##
+
+Reading & Writing streams is akin to your typical use-case of `INSERT`, `UPDATE` and `DELETE` operations within an RDBMS.  In event-sourced applications, on those rare instances where you need up-to-the-minute information, you will read your stream(s) of concern to ensure you can make the necessary changes within your application.
+
+To give context to the above statement, if you are trying to withdraw $100 from your bank account, and the requirements of the account states that you ** MAY NOT ** overdraft the account, you want to ensure that you are indeed have a balance that is equivalent to, or greater than the $100 that you are trying to withdraw.
+
+### Project Structure ###
+
+We'll start by initializing a basic project structure to contain the necessary code for reading and writing a stream.  The example breaks apart the read and write portions to better clarify that the writing application may or may not also be responsible for future reads of the information.
+
+Before we get into code, create a folder on your hard disc to contain the solution, then within that folder from your command line, execute the following powershell script.  (If you do not have powershell, adjust the script below for your appropriate shell.)
+
+```PowerShell
+mkdir StreamWriter; `
+mkdir StreamReader; `
+`
+dotnet new sln; `
+`
+dotnet new console -o ./StreamWriter; `
+dotnet add ./StreamWriter/StreamWriter.csproj package EventStore.Client.Grpc.Streams --version 22.0.0; `
+dotnet add ./StreamWriter/StreamWriter.csproj package System.Text.Json --version 6.0.3; `
+dotnet sln add ./StreamWriter; `
+`
+dotnet new console -o ./StreamReader; `
+dotnet add ./StreamReader/StreamReader.csproj package EventStore.Client.Grpc.Streams --version 22.0.0; `
+dotnet add ./StreamReader/StreamReader.csproj package System.Text.Json --version 6.0.3; `
+dotnet sln add ./StreamReader; `
+```
+
+> _Note:_ we've added two nuget packages to each project.  `EventStore.Client.Grpc.Streams` will be used to interact with EventStore DB. `System.Text.Json` will be used for data serialization and de-serialization where appropriate.  Other libraries, such as NewtonSoft.Json, SimpleJson, etc. can be used for the same use-case.
+
+#### Stream Reader ####
+
+#### Stream Writer ####
+
+
+## Publish and Subscribe to Streams ##
+### Project Structure ###
+#### Stream Writer ####
+#### All-Stream Listener ####
+#### Stream Listener ####
+# Next Steps/Call to Action/Where Do We Go from Here #
+---
+---
+---
+
+
+
+## Download ##
+
 
 ## Launch EventStore DB For the First Time ##
 
@@ -45,14 +128,6 @@ To start connecting and otherwise interacting with EventStore DB, we're going to
 
 ### Project Structure ###
 
-#### StreamWriter ####
-
-The stream-writer will be a tool with a basic command prompt that will write one or more pre-defined events into EventStore DB.
-
-#### StreamReader ####
-
-The stream-reader will be a tool with a basic command prompt that will read the newly written events from EventStore DB.
-
 #### AllStreamListener ####
 
 This application will listen to the $all stream, which is the global log of all events ever written into EventStore DB.  You can learn more about the $all stream [here](http://tbd/)
@@ -76,7 +151,6 @@ dotnet sln add ./StreamWriter; `
 dotnet sln add ./StreamReader; `
 dotnet sln add ./AllStreamListener; `
 dotnet sln add ./StreamListener
-
 ```
 
 Now that you have a basic solution together, we need to add two additional packages:
