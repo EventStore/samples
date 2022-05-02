@@ -265,9 +265,9 @@ Hmm... ok... so, let's relieve that issue.  We'll just have a caching layer in o
 
 As our solution continues to gain adoption and has to scale, we then have to:
 
-* Add more nodes to our RDBMS cluster to handle the database load
-* Add more caching nodes to our cache cluster to handle additional caching operations.
-* Run regression testing to ensure our caching solution will not break under our new minimum load.
+* Add additional instances of our RDBMS server to our cluster, which will handle the additional demand for queries.
+* Add additional instances of our caching server to our cluster, which handles the additional caching demands.
+* Run regression testing to ensure our caching solution does not fault under our new minimum load.
 
 What just happened?  We've introduced additional software into our infrastructure, added additional code into our application, and taken on additional third-party libraries to interact with the caching solution.  Also too, we have to do a complete regression of our application to ensure we have not broken anything as part of our enhancements to allow scaling.  This can be quite costly, and make future updates more cumbersome as we have more code to maintain.
 
