@@ -105,8 +105,8 @@ var events = new[]{
         },
         Body = new {
             Id = Guid.NewGuid(),
-            FirstName = "George",
-            LastName = "Washington"
+            FirstName = "Samuel",
+            LastName = "Adams"
         }
     }
 };
