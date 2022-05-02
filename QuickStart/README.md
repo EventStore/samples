@@ -4,22 +4,26 @@ Welcome to EventStore DB.
 
 This outlines the very basics you need in order to start from nothing to bring an instance of EventStore DB online and using it to move messages through the database.  This QuickStart is geared toward software developers that have knowledge of dotnet core, but have never used EventStore DB before.
 
-## Prerequisites ##
+# Prerequisites #
 
 * [dotnet core v6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 * [Visual Studio Code](https://code.visualstudio.com/download)
 
-For these purposes, we are using dotnet 6 sdk v6.0.202 and Visual Studio Code: Version: 1.66.2 (system setup) @ commit: dfd34e8260c270da74b5c2d86d61aee4b6d56977
+For our purpose within this tutorial, we are using dotnet 6 sdk v6.0.202 and Visual Studio Code: Version: 1.66.2 (system setup) @ commit: dfd34e8260c270da74b5c2d86d61aee4b6d56977
 
 EventStore DB will be running from `C:\ESDB`
 
-## Download ##
+# Download #
 
-EventStore DB can be downloaded from [https://www.eventstore.com/downloads](https://www.eventstore.com/downloads).  You will want to choose the latest version.  For this discussion, we will be using v21.10.2 LTS and will be working on a Windows 11 PC.
+EventStore DB can be downloaded from [https://www.eventstore.com/downloads](https://www.eventstore.com/downloads).  You will want to choose the latest version.  For this tutorial, we will be using v21.10.2 LTS and will be working on a Windows 11 PC.
+
+> _Note:_ Earlier versions of Windows may be used as well, but the procedures may need to be changed slightly to use this tutorial.
 
 Once downloaded, go to your `Downloads` folder (or where-ever your downloads are saved) and look for the *.zip file you have just downloaded.  Right-click and choose `Extract All` from the context menu, choosing `C:\ESDB\`.
 
-## Launch EventStore DB For the First Time ##
+# Launch EventStore DB For the First Time #
+
+> _NOTE:_ The steps below will provide you with the minimum setup you will need for a development environment.  This is not intended to be guidance for setup in a production environment.
 
 With EventStore DB now available on your workstation, open a PowerShell prompt and change your directory:
 
@@ -37,74 +41,42 @@ To ensure this is now online, open a web browser and navigate to [http://localho
 
 ![Dashboard](./img/initial-dashboard.png)
 
-This will provide you an instance of EventStore DB that runs completely in-memory and has no security measures in-place.  **DO NOT** use this for a production setup.
+# Example Use-Cases #
 
-## Example Project ##
+## Reading and Writing Streams ##
 
-To start connecting and otherwise interacting with EventStore DB, we're going to create a small solution of several dotnet console applications.  The final result of this document is provided here as well.
+Our basic use-case is to write information to a stream, then subsequently read that stream to use the information at a later date.  We'll start by creating a basic solution to work within.  Go ahead and create a working folder to store this solution in, then from within that working folder, execute the following script:
 
-### Project Structure ###
-
-#### StreamWriter ####
-
-The stream-writer will be a tool with a basic command prompt that will write one or more pre-defined events into EventStore DB.
-
-#### StreamReader ####
-
-The stream-reader will be a tool with a basic command prompt that will read the newly written events from EventStore DB.
-
-#### AllStreamListener ####
-
-This application will listen to the $all stream, which is the global log of all events ever written into EventStore DB.  You can learn more about the $all stream [here](http://tbd/)
-
-#### StreamListener ####
-
-This application will perform the same basic task as the AllStreamListener application, but will be listening for a specific stream of events, rather than every single event ever committed into EventStore DB.
-
-To quickly get the project structure setup, use the script below:
 ```PowerShell
-mkdir StreamWriter; `
-mkdir StreamReader; `
-mkdir AllStreamListener; `
-mkdir StreamListener; `
 dotnet new sln; `
+`
+mkdir StreamWriter; `
 dotnet new console -o ./StreamWriter; `
-dotnet new console -o ./StreamReader; `
-dotnet new console -o ./AllStreamListener; `
-dotnet new console -o ./StreamListener; `
-dotnet sln add ./StreamWriter; `
-dotnet sln add ./StreamReader; `
-dotnet sln add ./AllStreamListener; `
-dotnet sln add ./StreamListener
-
-```
-
-Now that you have a basic solution together, we need to add two additional packages:
-
-* EventStore DB Grpc Client
-* System.Text.Json
-
-```PowerShell
 dotnet add ./StreamWriter/StreamWriter.csproj package EventStore.Client.Grpc.Streams --version 22.0.0; `
 dotnet add ./StreamWriter/StreamWriter.csproj package System.Text.Json --version 6.0.3; `
+dotnet sln add ./StreamWriter; `
+`
+mkdir StreamReader; `
+dotnet new console -o ./StreamReader; `
 dotnet add ./StreamReader/StreamReader.csproj package EventStore.Client.Grpc.Streams --version 22.0.0; `
 dotnet add ./StreamReader/StreamReader.csproj package System.Text.Json --version 6.0.3; `
-dotnet add ./AllStreamListener/AllStreamListener.csproj package EventStore.Client.Grpc.Streams --version 22.0.0; `
-dotnet add ./AllStreamListener/AllStreamListener.csproj package System.Text.Json --version 6.0.3; `
-dotnet add ./StreamListener/StreamListener.csproj package EventStore.Client.Grpc.Streams --version 22.0.0; `
-dotnet add ./StreamListener/StreamListener.csproj package System.Text.Json --version 6.0.3
-
+dotnet sln add ./StreamReader; `
 ```
 
-The main Grpc Client library allows you to read & write streams from EventStore DB.  System.Text.Json provides the ability to serialize in-memory CLR objects to Json for storage in EventStore DB.
+What we've done here is to create two console applications, added them into the solution, then added two supporting libraries into each project:
 
->_Note 1_: Although we are using System.Text.Json to serialize our CLR objects, you can use any Json serialization library (Newtonsoft, SimpleJson, etc.)
+<dl>
+<dt>EventStore.Client.Grpc.Streams</dt>
+<dd>This library is the official C# client library for interacting with EventStore DB.  Its basic use-case is for reading, writing, and subscribing to streams.  In later tutorials, we'll look at using other libraries for administration of EventStore DB, etc.</dd>
+<dt>System.Text.Json</dt>
+<dd>System.Text.Json is being utilized for CLR object serialization and de-serialization where necessary.  Other Json serialization libraries, such as NewtonSoft.Json and SimpleJSON may be used as well.</dd>
+</dl>
 
->_Note 2_: EventStore DB natively stores the metadata and body of each event as a series of bytes, not text.  If your requirements state that you must use another messaging format like protobuf, bson, etc.; storage is possible, but you will not have an ability to use some of the advanced features of EventStore DB.
+In each project, there will be a single file that we'll be working in, which is `Program.cs`.
 
-### Writing Your First Event ###
+>_Note:_ EventStore DB stores all events as a byte array, allowing for any form of data to be stored.  We highly recommend using Json formatted data to provide an ability to use a few of the more advanced features EventStore DB provides.
 
-With the solution framework setup, let's write out first event.
+### Writing Events To a Stream ###
 
 Open the `Program.cs` file in your `StreamWriter` project.  Replace the contents with the following code snippet:
 
@@ -133,8 +105,8 @@ var events = new[]{
         },
         Body = new {
             Id = Guid.NewGuid(),
-            FirstName = "Samuel",
-            LastName = "Adams"
+            FirstName = "George",
+            LastName = "Washington"
         }
     }
 };
@@ -183,11 +155,13 @@ Click on the `1@users` link.  You should see a new screen similar to the followi
 
 This is now the details of the second event you wrote in the console application.  Note both the `Metadata` and `Data` values are equivalent to the Metadata and Data values in code.
 
-### Reading Your Event ###
+### Reading Written Events From a Stream ###
 
-Cool!  You've written your first two events into EventStore DB.  Quite easy, is it not?  Now, for EventStore DB to be completely useful, you need to have access to this data in the future.  In RDBMS solutions, we `SELECT` this data into a series of records, then map it into our CLR objects.  With EventStore DB, you read the created stream, then de-serialize the information using a JsonSerializer, into your CLR objects for use.
+Cool!  You've written your first two events into EventStore DB.  Quite easy, is it not?  Now, for EventStore DB to be completely useful, you need to have access to this data in the future.  In other data storage software, we `SELECT` or `Query` this data into a series of records, then map it into our CLR objects.  With EventStore DB, you read the stream data and de-serialize it to CLR objects using a JsonSerializer.
 
 Open the `Program.cs` file in the `StreamReader` project.  Paste the following code into the file, replacing everything else:
+
+> _Note:_ We are not going to deserialize the event data into a CLR object.  Object serialization and de-serialization procedures can be learned through your serialization library of choice.
 
 ```CSharp
 // basic connection to EventStore DB
@@ -242,42 +216,76 @@ Read completed.
 
 If you compare this output with the EventStore DB Console screen for each event, you will see the values are the same.
 
+## Subscribing to Streams ##
 
-### Subscribing to Streams ###
+### Why Subscribing to Streams Matters ###
 
 Let's take a moment before we continue to talk about the best way to use a streaming database.  
 
-In traditional RDBMS programming, everything that you do is `INSERT`, `UPDATE`, `SELECT`, and `DELETE` operations.  
+In other forms of software programming, whether using a document database, a key/value store, or RDBMS, the typical workflow is `INSERT` one or more records into the store, then `SELECT` or `Query` that information to extract it for display onscreen, then finally `DELETE` the information from the data store when it is no longer needed.  
 
-With stream databases, all new data is appended within the database, much like you would write a new entry into your general ledger or checkbook.  Also, you're not needing to perform `SELECT` or `READ` operations in most circumstances, but rather `Subscribe` to a stream and listen for changes as they occur.  If you've ever worked with UI tools like ReactUI, Caliburn.Micro, or Knockout.JS, then you have a cursory understanding of how this will work.
+With stream databases, all new information is appended within the database, much like you would write a new entry into your general ledger or checkbook.  Also, you're not needing to perform `SELECT` or `QUERY` operations in most circumstances.  With stream-based programming, using one or more subscriptions to one or many streams will provide an ability to receive notifications when new information is appended to each observed stream as it occurs.  
 
-Why is this important?  In traditional RDBMS based solutions, if you want to see updates as users interact with your product, you have to poll the database using `SELECT` over, and over, again.  This creates significantly more load on your RDBMS, especially as the adoption of your application grows.
+> Note: If you've worked with UI-based frameworks such as AngularJS, DurandalJS, Caliburn.Micro, React-UI, etc., then this concept should be familar to you already.
 
-Hmm... ok... so, let's relieve that issue.  We'll just have a caching layer in our application.  When someone adds new information, changes information, or removes information from the system, we will invalidate the cached results, and only re-build them the next time someone asks for the updated information.  Our answer looks like:
+Why is this important?  In other methods of writing software, if you want to see updates as users interact with your product, you have to constantly query your data source regularly to retrieve the changes as they occur.  This does indeed work, but as the adoption of the software increases, the server infrastructure must be grown by adding additional instances of your data source software to handle the additional load.
 
-* Select a caching solution (Redis, Couchbase, etc.)
-* Write a wrapper between our data storage and retrieval logic to check our data cache first.  If we have something in cache, return the cache'd data instead of our read from the database.
-* Adjust our insert, update, and delete events to invalidate the cache.
-* Re-test all scenarios to ensure the cache is updated for each operation within the system.
-* Deploy our caching solution into our environment.
-* Publish our application.
-* Hope for the best.
+The typical reaction is "Ok, let's add caching into our software!  We'll continue by invalidating the cache each time a change is made, and on the next read, re-build the information for use!"
+
+>The subsequent action looks like:
+>
+> * Select a caching solution (Redis, Couchbase, etc.)
+> * Write a wrapper between our data storage and retrieval logic to check our data cache first.  If we have something in cache, return the cache'd data instead of our read from the database.
+> * Adjust our insert, update, and delete events to invalidate the cache.
+> * Re-test all scenarios to ensure the cache is updated for each operation within the system.
+> * Deploy our caching solution into our environment.
+> * Publish our application.
 
 As our solution continues to gain adoption and has to scale, we then have to:
 
-* Add additional instances of our RDBMS server to our cluster, which will handle the additional demand for queries.
-* Add additional instances of our caching server to our cluster, which handles the additional caching demands.
+* Add additional instances of the chosen data storage software into its cluster, which will handle the additional demand for queries.
+* Add additional instances of the chosen caching server to its cluster, which handles the additional caching demands.
 * Run regression testing to ensure our caching solution does not fault under our new minimum load.
 
-What just happened?  We've introduced additional software into our infrastructure, added additional code into our application, and taken on additional third-party libraries to interact with the caching solution.  Also too, we have to do a complete regression of our application to ensure we have not broken anything as part of our enhancements to allow scaling.  This can be quite costly, and make future updates more cumbersome as we have more code to maintain.
+What just happened?  We've introduced additional software into our infrastructure, added additional code into our application, and taken on additional third-party libraries to interact with the caching solution.  Also too, we have to do a complete regression of our application to ensure we have not broken anything as part of our enhancements to allow scaling.  This can be quite costly as each update will require a full regression, and we have to maintain additional code to support the caching layer.
 
-With stream-based databases, this is not the case.  Think about it, you only ever need to change what is displayed on-screen when you introduce new information into EventStore DB.  You are never asking if changes have happened, instead listening for those changes and _reacting_ to them.  When a new event is observed, we can update in-memory read models, then serve those read models any time a user refreshes their browser... or, in the case of a desktop application, automatically update the user interface without a button to re-load the data, and without constant polling of the database.
+With stream-based databases, we can scale without additional code.  Think about it for a moment. The only time you need to change what a user sees on-screen is when new information is introduced within EventStore DB.  By subscribing to the streams, your application is now notified when that information has changed, and you can handle those notifications to change your in-memory models of the streams.  After the updates complete, those changes can be pushed to your UI via webSockets (in the case of web-based applications) or raising `INotifyPropertyChanged` within desktop client applications.
 
 Let's complete the final project(s) in this tutorial to tie everything together.
 
-#### Stream Writer ####
+### Creating the Project ###
 
-We're going to adjust the stream writer application to continuously create events into three different streams, with a 250ms delay.  This will emulate users interacting with our solution.
+To see how subscriptions work within EventStore DB, we're going to create a new solution.  Start by creating a new working folder, then from within that folder, execute the following script:
+
+```PowerShell
+dotnet new sln; `
+`
+mkdir StreamWriter; `
+dotnet new console -o ./StreamWriter; `
+dotnet add ./StreamWriter/StreamWriter.csproj package EventStore.Client.Grpc.Streams --version 22.0.0; `
+dotnet add ./StreamWriter/StreamWriter.csproj package System.Text.Json --version 6.0.3; `
+dotnet sln add ./StreamWriter; `
+`
+mkdir AllStreamListener; `
+dotnet new console -o ./AllStreamListener; `
+dotnet add ./AllStreamListener/AllStreamListener.csproj package EventStore.Client.Grpc.Streams --version 22.0.0; `
+dotnet add ./AllStreamListener/AllStreamListener.csproj package System.Text.Json --version 6.0.3; `
+dotnet sln add ./AllStreamListener; `
+`
+mkdir StreamListener; `
+dotnet new console -o ./StreamListener; `
+dotnet add ./StreamListener/StreamListener.csproj package EventStore.Client.Grpc.Streams --version 22.0.0; `
+dotnet add ./StreamListener/StreamListener.csproj package System.Text.Json --version 6.0.3; `
+dotnet sln add ./StreamListener
+```
+
+The same as above, you'll notice our use of `EventStore.Client.Grpc.Streams` and `System.Text.Json` for communications with EventStore DB and data serialization/de-serialization.
+
+#### Writing to Streams ####
+
+The following code looks a bit daunting at first.  This code simply creates new events and appends them to one of two streams with a delay of 250ms between writes.  This will allow you to observe the outcome of each subscription.
+
+Open up the `Program.cs` file in your `StreamWriter` project and paste the following code:
 
 ```CSharp
 using System.Text.Json;
@@ -360,10 +368,11 @@ do {
 } while(true);
 ```
 
+#### Listening to the Users Stream ####
 
-#### Stream Listener ####
+The first subscriber will only listen to the `users` stream.
 
-In our stream listener program, we are going to listen for any new information when something happens in reference to the `users` stream.
+Open the `Program.cs` file in the `StreamReader` application, then replace the content of that file with the following code:
 
 ```CSharp
 // basic connection to EventStore DB
@@ -396,9 +405,11 @@ using(var subscription = await listener) {
 }
 ```
 
-#### All Stream Listener ####
+#### Listening to the $all Stream ####
 
-In our all stream listener program, we are going to listen for any new information that is appended into the database without regard for what it is in reference to.
+Listening to the `$all` stream can be very powerful in certain use-cases.  The discussion and full use-case is quite in-depth and better covered on its own.  This is a quick demonstration to show that it is possible to listen for all events within EventStore DB.
+
+Open `Program.cs` within your `AllStreamListener` project and replace the contents with the following code snippet:
 
 ```CSharp
 // basic connection to EventStore DB
@@ -430,26 +441,32 @@ using(var subscription = await listener) {
 }
 ```
 
-With all three console applications updated, we can now execute them.  Open up three PowerShell console windows, and execute the following commands, one in each console window.
 
-**Stream Listener (Listens for changes in the 'users' stream)**
+### Run the Solution ###
+
+With the changes made to each of the projects within the solution, let's run them.  To do this, we will open three console windows and execute one project per window.  This provides an ability to observe what each project is doing, in real-time.
+
+Execute the following commands, one in each console window you've opened:
+
 ```PowerShell
 dotnet run --project .\StreamListener\StreamListener.csproj
 ```
 
-**All Stream (listens for changes anywhere within the general ledger)**
 ```PowerShell
 dotnet run --project .\AllStreamListener\AllStreamListener.csproj
 ```
 
-**Stream Writer**
 ```PowerShell
 dotnet run --project .\StreamWriter\StreamWriter.csproj
 ```
 
-You'll notice that each time a new user is created & they punch in, you will get an update to the StreamListener application that the user was added.  In the AllStream application, you'll see that not only new users have been created, but that each user has also clocked in.
+As you observe the output within each console, you'll notice the following:
 
-# Where to go From Here #
+* Every 250ms, a `NewUser` event is appended to the `users` stream; and a new `ClockedIn` event is appended to the `timeclock` stream.
+* In the `AllStreamListener` project, both the `NewUser` and `ClockedIn` events are observed, along with system events that are triggered as part of appending each event into their streams.
+* In the `StreamListener` project, only the `NewUser` event is observed, as we are only observing the `users` stream.
+
+# Next Steps #
 
 [How to finish?]
 
