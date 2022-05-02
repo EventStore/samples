@@ -372,7 +372,7 @@ do {
 
 The first subscriber will only listen to the `users` stream.
 
-Open the `Program.cs` file in the `StreamReader` application, then replace the content of that file with the following code:
+Open the `Program.cs` file in the `StreamListener` application, then replace the content of that file with the following code:
 
 ```CSharp
 // basic connection to EventStore DB
@@ -462,6 +462,7 @@ dotnet run --project .\StreamWriter\StreamWriter.csproj
 
 As you observe the output within each console, you'll notice the following:
 
+* The subscription type being used is a "catch-up" subscription.  What is happening is that from the start of the stream, the subscription is reading to the latest event in the stream, then listening for new events.  It is possible to start from any position within the stream, dependent on the use-case (this is especially useful with creating and caching read models, where the state also records the position of the stream the state was derived from.)
 * Every 250ms, a `NewUser` event is appended to the `users` stream; and a new `ClockedIn` event is appended to the `timeclock` stream.
 * In the `AllStreamListener` project, both the `NewUser` and `ClockedIn` events are observed, along with system events that are triggered as part of appending each event into their streams.
 * In the `StreamListener` project, only the `NewUser` event is observed, as we are only observing the `users` stream.
