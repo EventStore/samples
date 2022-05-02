@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamWriter", "StreamWriter\StreamWriter.csproj", "{0A74071E-A522-421C-A080-0651135CEBEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllStreamListener", "AllStreamListener\AllStreamListener.csproj", "{16540AAB-6818-4718-9AEC-BA919CFFDD9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamListener", "StreamListener\StreamListener.csproj", "{A973AD0C-2576-4BBC-9161-0958FFC3F719}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A74071E-A522-421C-A080-0651135CEBEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A74071E-A522-421C-A080-0651135CEBEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A74071E-A522-421C-A080-0651135CEBEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A74071E-A522-421C-A080-0651135CEBEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16540AAB-6818-4718-9AEC-BA919CFFDD9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16540AAB-6818-4718-9AEC-BA919CFFDD9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16540AAB-6818-4718-9AEC-BA919CFFDD9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16540AAB-6818-4718-9AEC-BA919CFFDD9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A973AD0C-2576-4BBC-9161-0958FFC3F719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A973AD0C-2576-4BBC-9161-0958FFC3F719}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A973AD0C-2576-4BBC-9161-0958FFC3F719}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A973AD0C-2576-4BBC-9161-0958FFC3F719}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
