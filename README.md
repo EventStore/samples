@@ -52,6 +52,15 @@ There are two variations of handling the business logic:
 - shows how to use the .NET `System.Security.Cryptography` library with [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) algorithm to encrypt and decrypt events' data.
 - uses EventStoreDB.
 
+### **[Sending EventStoreDB logs to Elasticsearch](./Logging/Elastic/)
+
+**Description**:
+
+This samples show how to configure various ways of sending logs from EventStoreDB to Elasticsearch:
+- [Logstash](./Logging/Elastic/Logstash/),
+- [Filebeat](./Logging/Elastic/Filebeat/),
+- [FilebeatWithLogstash](./Logging/Elastic/FilebeatWithLogstash/)
+
 ## Running samples locally
 
 Check the `README.md` file in the specific sample folder for the detailed run instructions.
