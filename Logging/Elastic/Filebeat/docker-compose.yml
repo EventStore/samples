@@ -17,17 +17,6 @@ x-eventstore-volume-logs:
 version: "3.8"
 services:
     #######################################################
-    #  Setup local `logs` folder for shared logs storage
-    #######################################################
-    volumes-provisioner:
-        image: hasnat/volumes-provisioner
-        environment:
-            PROVISION_DIRECTORIES: "1000:1000:0755:/logs"
-        volumes:
-            - "./logs:/logs"
-        network_mode: none
-
-    #######################################################
     #  EventStoreDB
     #######################################################
     eventstoredb:
@@ -47,6 +36,7 @@ services:
         ports:
             - '1113:1113'
             - '2113:2113'
+        restart: unless-stopped
         volumes:
             -   type: volume
                 source: eventstore-volume-data
@@ -56,8 +46,6 @@ services:
             - <<: *eventstore-volume-logs
         networks:
             - esdb_network
-        depends_on:
-            - volumes-provisioner
 
     #######################################################
     #  Filebeat to harvest logs from event store logs
@@ -99,6 +87,7 @@ services:
             memlock:
                 soft: -1
                 hard: -1
+        restart: unless-stopped
         volumes:
             - elastic-data:/usr/share/elasticsearch/data
         ports:
@@ -125,6 +114,7 @@ services:
         image: docker.elastic.co/kibana/kibana:8.2.0
         environment:
             - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+        restart: unless-stopped
         ports:
             - "5601:5601"
         networks:
