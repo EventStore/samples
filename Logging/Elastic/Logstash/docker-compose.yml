@@ -7,8 +7,26 @@
 #  It's NOT recommended to run setup through docker-compose on production.
 ###########################################################################
 
+# map logs to disk location and share between containers
+x-eventstore-volume-logs:
+  &eventstore-volume-logs
+  type: bind
+  source: ./logs
+  target: /var/log/eventstore
+
 version: "3.8"
 services:
+    #######################################################
+    #  Setup local `logs` folder for shared logs storage
+    #######################################################
+    volumes-provisioner:
+        image: hasnat/volumes-provisioner
+        environment:
+            PROVISION_DIRECTORIES: "1000:1000:0755:/logs"
+        volumes:
+            - "./logs:/logs"
+        network_mode: none
+
     #######################################################
     #  EventStoreDB
     #######################################################
@@ -35,11 +53,11 @@ services:
                 target: /var/lib/eventstore
             # external volume to be able to share EventStoreDB logs
             # with Filebeat image
-            -   type: volume
-                source: eventstore-volume-logs
-                target: /var/log/eventstore
+            - <<: *eventstore-volume-logs
         networks:
             - esdb_network
+        depends_on:
+            - volumes-provisioner
 
     #######################################################
     #  Logstash for more advanced log pipelines
@@ -57,9 +75,7 @@ services:
             # add Logstash config file
             - "./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro"
             # get access to EventStoreDB logs through shared external volume
-            -   type: volume
-                source: eventstore-volume-logs
-                target: /var/log/eventstore/
+            - <<: *eventstore-volume-logs
         # make sure that LogStash is restarted
         # in case ElasticSearch or EventStoreDB
         # were not available yet

@@ -7,8 +7,26 @@
 #  It's NOT recommended to run setup through docker-compose on production.
 ###########################################################################
 
+# map logs to disk location and share between containers
+x-eventstore-volume-logs:
+  &eventstore-volume-logs
+  type: bind
+  source: ./logs
+  target: /var/log/eventstore
+
 version: "3.8"
 services:
+    #######################################################
+    #  Setup local `logs` folder for shared logs storage
+    #######################################################
+    volumes-provisioner:
+        image: hasnat/volumes-provisioner
+        environment:
+            PROVISION_DIRECTORIES: "1000:1000:0755:/logs"
+        volumes:
+            - "./logs:/logs"
+        network_mode: none
+
     #######################################################
     #  EventStoreDB
     #######################################################
@@ -35,11 +53,11 @@ services:
                 target: /var/lib/eventstore
             # external volume to be able to share EventStoreDB logs
             # with Filebeat image
-            -   type: volume
-                source: eventstore-volume-logs
-                target: /var/log/eventstore
+            - <<: *eventstore-volume-logs
         networks:
             - esdb_network
+        depends_on:
+            - volumes-provisioner
 
     #######################################################
     #  Filebeat to harvest logs from event store logs
@@ -59,9 +77,7 @@ services:
             # add Filebeat config file
             - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
             # get access to EventStoreDB logs through shared external volume
-            -   type: volume
-                source: eventstore-volume-logs
-                target: /var/log/eventstore/
+            - <<: *eventstore-volume-logs
         depends_on:
             - eventstoredb
             - logstash
@@ -166,11 +182,4 @@ networks:
 
 volumes:
     eventstore-volume-data:
-    # map logs to disk location
-    eventstore-volume-logs:
-      driver: local
-      driver_opts:
-        o: bind
-        type: none
-        device: ./logs
     elastic-data:
