@@ -21,38 +21,38 @@ Samples are organised by the specific topic. By going to the folder, you can fin
 ### **[CQRS flow](./CQRS_Flow/)** 
 - [.NET](./CQRS_Flow/.NET/)
 
-**Description**:
-- typical Event Sourcing with CQRS flow.
-- stores events to EventStoreDB.
-- shows how to organise the write model and read model handling.
-- Builds read models using [Subscription to `$all`](https://developers.eventstore.com/clients/grpc/subscribing-to-streams/#subscribing-to-all).
-- Read models are stored as ElasticSearch documents.
-- Shows how to unit and integration test solution.
+  **Description**:
+  - typical Event Sourcing with CQRS flow.
+  - stores events to EventStoreDB.
+  - shows how to organise the write model and read model handling.
+  - Builds read models using [Subscription to `$all`](https://developers.eventstore.com/clients/grpc/subscribing-to-streams/#subscribing-to-all).
+  - Read models are stored as ElasticSearch documents.
+  - Shows how to unit and integration test solution.
 
 - [Java](./CQRS_Flow/Java/)
 
-**Description**:
-- typical Event Sourcing with CQRS flow.
-- stores events to EventStoreDB.
-- shows how to organise the write model and read model handling.
-- Builds read models using [Subscription to `$all`](https://developers.eventstore.com/clients/grpc/subscribing-to-streams/#subscribing-to-all).
-- Read models are stored as Postgres documents.
-- Shows how to unit and integration test solution.
+  **Description**:
+  - typical Event Sourcing with CQRS flow.
+  - stores events to EventStoreDB.
+  - shows how to organise the write model and read model handling.
+  - Builds read models using [Subscription to `$all`](https://developers.eventstore.com/clients/grpc/subscribing-to-streams/#subscribing-to-all).
+  - Read models are stored as Postgres documents.
+  - Shows how to unit and integration test solution.
 
-There are two variations of handling the business logic:
-- [Aggregate pattern](./CQRS_Flow/Java/event-sourcing-esdb-aggregates)
-- [Command handlers as pure functions](./CQRS_Flow/Java/event-sourcing-esdb-simple)
+  There are two variations of handling the business logic:
+  - [Aggregate pattern](./CQRS_Flow/Java/event-sourcing-esdb-aggregates)
+  - [Command handlers as pure functions](./CQRS_Flow/Java/event-sourcing-esdb-simple)
 
 
 ### **[Crypto Shredding](./Crypto_Shredding/)** 
 - [.NET](./Crypto_Shredding/.NET/)
 
-**Description**:
-- shows how to Protecting Sensitive Data (e.g. for [European General Data Protection Regulation](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation)) in Event-Sourced Systems.
-- shows how to use the .NET `System.Security.Cryptography` library with [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) algorithm to encrypt and decrypt events' data.
-- uses EventStoreDB.
+  **Description**:
+  - shows how to Protecting Sensitive Data (e.g. for [European General Data Protection Regulation](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation)) in Event-Sourced Systems.
+  - shows how to use the .NET `System.Security.Cryptography` library with [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) algorithm to encrypt and decrypt events' data.
+  - uses EventStoreDB.
 
-### **[Sending EventStoreDB logs to Elasticsearch](./Logging/Elastic/)
+### **[Sending EventStoreDB logs to Elasticsearch](./Logging/Elastic/)**
 
 **Description**:
 
