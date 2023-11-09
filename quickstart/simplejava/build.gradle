@@ -1,0 +1,38 @@
+plugins {
+  id "com.github.johnrengelman.shadow" version "8.1.1"
+  id 'java'
+  id 'application'
+}
+
+shadowJar {
+   archiveBaseName.set('java-sample-0.0.1')
+   mergeServiceFiles()
+   //append 'version.conf'
+}
+
+mainClassName = 'com.example.EsdbDemo'
+
+dependencies {
+
+    implementation "com.eventstore:db-client-java:4.3.0"	
+
+    testCompileOnly 'junit:junit:4.12' 
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.1'       
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events "PASSED", "SKIPPED", "FAILED"
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+sourceCompatibility = '1.8' // '17'
+targetCompatibility = '1.8' // '17'
+

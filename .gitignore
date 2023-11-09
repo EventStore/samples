@@ -255,3 +255,7 @@ paket-files/
 /Logging/Elastic/Filebeat/logs
 /Logging/Elastic/FilebeatWithLogstash/logs
 /Logging/Elastic/Logstash/logs
+
+# macos
+.DS_Store
+
