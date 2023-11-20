@@ -14,7 +14,7 @@ mainClassName = 'com.example.EsdbDemo'
 
 dependencies {
 
-    implementation "com.eventstore:db-client-java:4.3.0"	
+    implementation "com.eventstore:db-client-java:5.2.0"	
 
     testCompileOnly 'junit:junit:4.12' 
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.1'       
