@@ -18,9 +18,9 @@ Read more in the [Contribution Guidelines](./CONTRIBUTING.md)
 
 Samples are organized by topics in dedicated directories by programming languages/environments.
 
-### Java quickstart
-- a plain java example to connect to EventStoreDB, append to a stream and read from a stream.
-- a Springboot "Hello World" example that connects to EventStoreDB, appends to a stream and reads from a stream.
+### [Java quickstart](./quickstart/)
+- a [plain java](/quickstart/simplejava) example to connect to EventStoreDB, append to a stream and read from a stream.
+- a [Springboot "Hello World"](quickstart/simplespringboot) example to connect to EventStoreDB, append to a stream and read from a stream.
 
 
 ### **[CQRS flow](./CQRS_Flow/)** 
