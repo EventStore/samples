@@ -23,7 +23,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    implementation "com.eventstore:db-client-java:4.3.0"	
+    implementation "com.eventstore:db-client-java:5.2.0"	
 }
 
 // Java 17
