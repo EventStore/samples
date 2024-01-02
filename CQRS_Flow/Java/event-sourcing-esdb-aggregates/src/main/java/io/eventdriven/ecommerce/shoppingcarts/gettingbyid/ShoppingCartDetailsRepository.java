@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface ShoppingCartDetailsRepository
   extends JpaRepository<ShoppingCartDetails, UUID> {
   @Query("SELECT d FROM ShoppingCartDetails d WHERE d.id = ?1 AND d.version >= ?2")
-  Optional<ShoppingCartDetails> findByIdAndNeverVersion(UUID id, long version);
+  Optional<ShoppingCartDetails> findByIdAndVersionOrNewer(UUID id, long version);
 }
