@@ -1,0 +1,6 @@
+@EventStoreDB.Dotnet.Sample_HostAddress = http://localhost:5100
+
+GET {{EventStoreDB.Dotnet.Sample_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
