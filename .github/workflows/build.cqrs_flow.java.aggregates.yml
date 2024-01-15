@@ -34,14 +34,14 @@ jobs:
         with:
           arguments: build
           gradle-version: wrapper
-          build-root-directory: ./CQRS_Flow/Java/event-sourcing-esdb-simple
+          build-root-directory: ./CQRS_Flow/Java/event-sourcing-esdb-aggregates
 
       - name: Archive test report
         uses: actions/upload-artifact@v2
         if: always()
         with:
           name: Test report
-          path: ./CQRS_Flow/Java/event-sourcing-esdb-simple/build/test-results/test
+          path: ./CQRS_Flow/Java/event-sourcing-esdb-aggregates/build/test-results/test
 
       - name: Stop containers
         if: always()
