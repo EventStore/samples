@@ -16,6 +16,6 @@ public record GetShoppingCartById(
   ) {
     return query.eTag() == null ?
       repository.findById(query.shoppingCartId())
-      : repository.findByIdAndNeverVersion(query.shoppingCartId(), query.eTag().toLong());
+      : repository.findByIdAndVersionOrNewer(query.shoppingCartId(), query.eTag().toLong());
   }
 }
