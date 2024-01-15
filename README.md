@@ -18,10 +18,9 @@ Read more in the [Contribution Guidelines](./CONTRIBUTING.md)
 
 Samples are organized by topics in dedicated directories by programming languages/environments.
 
-### [Java quickstart](./quickstart/)
-- a [plain java](/quickstart/simplejava) example to connect to EventStoreDB, append to a stream and read from a stream.
-- a [Springboot "Hello World"](quickstart/simplespringboot) example to connect to EventStoreDB, append to a stream and read from a stream.
-
+### **[Java Quickstart](./Quickstart/Java)**
+- See the [Java](/Quickstart/Java/esdb-sample-java) sample that shows how to connect to EventStoreDB, append to a stream and read from a stream.
+- See the [Spring Boot](Quickstart/Java/esdb-sample-springboot) sample that shows how to connect to EventStoreDB, append to a stream and read from a stream.
 
 ### **[CQRS flow](./CQRS_Flow/)** 
 - [.NET](./CQRS_Flow/.NET/)
