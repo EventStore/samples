@@ -72,7 +72,7 @@ class ShoppingCartDetailsProjection extends JPAProjection<ShoppingCartDetails, U
       }
 
       if (existingProductItem.get().getQuantity() == productItem.quantity()) {
-        view.getProductItems().remove(existingProductItem);
+        view.getProductItems().remove(existingProductItem.get());
       } else {
         existingProductItem.get().decreaseQuantity(productItem.quantity());
       }
