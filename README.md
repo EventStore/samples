@@ -18,9 +18,21 @@ Read more in the [Contribution Guidelines](./CONTRIBUTING.md)
 
 Samples are organized by topics in dedicated directories by programming languages/environments.
 
+### **[Go Quickstart](./Quickstart/Go)**
+- See the [Go](/Quickstart/Go/esdb-sample-go) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
+
 ### **[Java Quickstart](./Quickstart/Java)**
-- See the [Java](/Quickstart/Java/esdb-sample-java) sample that shows how to connect to EventStoreDB, append to a stream and read from a stream.
-- See the [Spring Boot](Quickstart/Java/esdb-sample-springboot) sample that shows how to connect to EventStoreDB, append to a stream and read from a stream.
+- See the [Java](/Quickstart/Java/esdb-sample-java) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
+- See the [Spring Boot](Quickstart/Java/esdb-sample-springboot) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
+
+### **[.NET Quickstart](./Quickstart/.NET)**
+- See the [.NET](/Quickstart/.NET/esdb-sample-dotnet) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
+
+### **[Node.js Quickstart](./Quickstart/Nodejs)**
+- See the [Node.js](/Quickstart/Nodejs/esdb-sample-nodejs) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
+
+### **[Python Quickstart](./Quickstart/Python)**
+- See the [Python](/Quickstart/Python/esdb-sample-python) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
 
 ### **[CQRS flow](./CQRS_Flow/)** 
 - [.NET](./CQRS_Flow/.NET/)
