@@ -1,44 +1,60 @@
-var builder = WebApplication.CreateBuilder(args);
+using System.Text.Json;
+using EventStore.Client;
+using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Register the EventStoreClient as a Singleton
+builder.Services.AddSingleton(
+    new EventStoreClient(EventStoreClientSettings.Create(
+            "esdb://admin:changeit@esdb_local:2113?tls=false&tlsVerifyCert=false")));
+
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+const string visitorsStream = "visitors-stream";
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/hello-world", async (
+        [FromQuery] [DefaultValue("Visitor")] string visitor, 
+        [FromServices] EventStoreClient eventStore,
+        CancellationToken cancellationToken) =>
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
+        var visitorGreeted = new VisitorGreeted(visitor);
+
+        var eventData = new EventData(
+            Uuid.NewUuid(),
+            nameof(VisitorGreeted),
+            JsonSerializer.SerializeToUtf8Bytes(visitorGreeted));
+
+        await eventStore.AppendToStreamAsync(
+            visitorsStream,
+            StreamState.Any,
+            new[] { eventData },
+            cancellationToken: cancellationToken);
+
+        var readStreamResult = eventStore.ReadStreamAsync(
+            Direction.Forwards, 
+            visitorsStream, 
+            StreamPosition.Start,
+            cancellationToken: cancellationToken);
+
+        var eventStream = await readStreamResult.ToListAsync(cancellationToken);
+
+        var visitorsGreeted = eventStream
+            .Select(re => JsonSerializer.Deserialize<VisitorGreeted>(re.Event.Data.ToArray()))
+            .Select(vg => vg!.Visitor)
             .ToArray();
-        return forecast;
+        
+        return Results.Ok($"{visitorsGreeted.Length} visitors have been greeted, they are: [{string.Join(',', visitorsGreeted)}]");
     })
-    .WithName("GetWeatherForecast")
+    .WithName("HelloWorld")
     .WithOpenApi();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+internal record VisitorGreeted(string Visitor);

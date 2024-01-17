@@ -1,0 +1,23 @@
+﻿services:
+  esdb_sample_dotnet:
+    image: esdb-sample-dotnet
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - esdb_local_net
+    depends_on:
+      esdb_local:
+        condition: service_started
+  esdb_local:
+    image: eventstore/eventstore:latest
+    environment:
+      EVENTSTORE_INSECURE: true
+    ports:
+      - "2113:2113"
+    networks:
+      - esdb_local_net
+networks:
+  esdb_local_net:
