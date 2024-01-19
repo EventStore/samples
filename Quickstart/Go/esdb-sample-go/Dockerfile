@@ -1,11 +1,7 @@
-FROM golang:1.21-alpine as build
-WORKDIR /app
+FROM golang:1.21
+WORKDIR /usr/src/app
 COPY go.mod go.sum ./
-RUN go mod download
+RUN go mod download && go mod verify
 COPY . .
-RUN go build -o esdb-sample-go
-
-FROM scratch
-COPY --from=build /app/esdb-sample-go /
-EXPOSE 8080
-CMD ["/esdb-sample-go"]
+RUN go build -v -o /usr/local/bin/esdb-sample-go ./...
+ENTRYPOINT ["esdb-sample-go"]
