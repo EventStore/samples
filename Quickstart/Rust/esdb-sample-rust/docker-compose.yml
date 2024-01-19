@@ -1,0 +1,23 @@
+services:
+  esdb_sample_rust:
+    image: esdb-sample-rust
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - esdb_local_net
+    depends_on:
+      esdb_local:
+        condition: service_started
+  esdb_local:
+    image: eventstore/eventstore:latest
+    environment:
+      EVENTSTORE_INSECURE: true
+    ports:
+      - "2113:2113"
+    networks:
+      - esdb_local_net
+networks:
+  esdb_local_net:
