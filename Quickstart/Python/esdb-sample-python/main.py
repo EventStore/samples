@@ -26,7 +26,7 @@ def hello_world():
         data=json.dumps(visitor_greeted.__dict__).encode('utf-8')
     )
 
-    _ = event_store.append_to_stream(
+    append_result = event_store.append_to_stream(
         stream_name=visitors_stream,
         current_version=StreamState.ANY,
         events=[event_data],
