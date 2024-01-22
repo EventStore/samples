@@ -12,7 +12,7 @@ event_store = EventStoreDBClient(
 
 visitors_stream = 'visitors-stream'
 
-@app.route('/')
+@app.route('/hello-world')
 def hello_world():
     @dataclass
     class VisitorGreeted:
