@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8080:8080"
     networks:
       - esdb_local_net
     depends_on:
