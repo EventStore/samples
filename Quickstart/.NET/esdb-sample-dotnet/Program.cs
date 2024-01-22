@@ -10,7 +10,7 @@ builder.Services.AddSwaggerGen();
 // Register the EventStoreClient as a Singleton
 builder.Services.AddSingleton(
     new EventStoreClient(EventStoreClientSettings.Create(
-            "esdb://admin:changeit@esdb_local:2113?tls=false&tlsVerifyCert=false")));
+            "esdb://admin:changeit@esdblocal:2113?tls=false&tlsVerifyCert=false")));
 
 var app = builder.Build();
 app.UseHttpsRedirection();

@@ -47,17 +47,17 @@ Verify that the database is up and running by going to the EventStore dashboard 
 
 For Maven, build the JAR file with `./mvnw clean package` and then run with:
 ``` [source,sh]
-java -jar target/greeting-service.0.0.1.jar
+java -jar target/esdb-sample-springboot.0.0.1.jar
 ```
 
 For Gradle, build the JAR file with `./gradlew clean build` and then run with:
 ``` [source,sh]
-java -jar build/libs/greeting-service.0.0.1.jar
+java -jar build/libs/esdb-sample-springboot.0.0.1.jar
 ```
 
 ## Test the app manually
 
-For the greeting service default, curl or point a web browser to:
+For the visitorGreeted service default, curl or point a web browser to:
 ```
 http://localhost:9000/hello-world
 ```
@@ -78,7 +78,7 @@ $ curl "http://localhost:9000/hello-world?name=Nefertiti"
 {"id":"074979e1-5aa3-47ce-8dc3-e898e748a067","content":"Hello, Nefertiti!"}
 ```
 
-For the greeting service heartbeat, curl or point a web browser to:
+For the visitorGreeted service heartbeat, curl or point a web browser to:
 ```
 http://localhost:9001/actuator/health
 ```

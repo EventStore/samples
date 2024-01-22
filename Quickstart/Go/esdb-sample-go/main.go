@@ -17,7 +17,7 @@ import (
 func main() {
 	router := gin.Default()
 
-	settings, err := esdb.ParseConnectionString("esdb://admin:changeit@esdb_local:2113?tls=false&tlsVerifyCert=false")
+	settings, err := esdb.ParseConnectionString("esdb://admin:changeit@esdblocal:2113?tls=false&tlsVerifyCert=false")
 	if err != nil {
 		panic(err)
 	}

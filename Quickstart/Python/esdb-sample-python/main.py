@@ -7,7 +7,7 @@ from esdbclient import EventStoreDBClient, NewEvent, StreamState
 app = Flask(__name__)
 
 event_store = EventStoreDBClient(
-    uri='esdb://admin:changeit@esdb_local:2113?tls=false&tlsVerifyCert=false'
+    uri='esdb://admin:changeit@esdblocal:2113?tls=false&tlsVerifyCert=false'
 )
 
 visitors_stream = 'visitors-stream'

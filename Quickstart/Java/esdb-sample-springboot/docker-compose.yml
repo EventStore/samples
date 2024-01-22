@@ -1,6 +1,6 @@
 services:
-  esdbsamplenodejs:
-    image: esdb-sample-nodejs
+  esdbsamplespringboot:
+    image: esdb-sample-springboot
     build:
       context: .
       dockerfile: Dockerfile

@@ -1,5 +1,5 @@
 services:
-  esdb_sample_rust:
+  esdbsamplerust:
     image: esdb-sample-rust
     build:
       context: .
@@ -7,17 +7,17 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - esdb_local_net
+      - esdblocalnet
     depends_on:
-      esdb_local:
+      esdblocal:
         condition: service_started
-  esdb_local:
+  esdblocal:
     image: eventstore/eventstore:latest
     environment:
       EVENTSTORE_INSECURE: true
     ports:
       - "2113:2113"
     networks:
-      - esdb_local_net
+      - esdblocalnet
 networks:
-  esdb_local_net:
+  esdblocalnet:

@@ -10,7 +10,7 @@ const {
 } = require("@eventstore/db-client");
 
 const eventStore = new EventStoreDBClient(
-    { endpoint: 'esdb_local:2113' }, 
+    { endpoint: 'esdblocal:2113' }, 
     { insecure: true }
 )
 
