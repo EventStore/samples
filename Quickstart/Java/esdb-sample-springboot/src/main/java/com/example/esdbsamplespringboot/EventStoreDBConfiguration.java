@@ -10,6 +10,6 @@ public class EventStoreDBConfiguration {
     public EventStoreDBClient EventStoreDBClient() {
         return EventStoreDBClient.create(
                 EventStoreDBConnectionString.parseOrThrow(
-                        "esdb://admin:changeit@esdblocal:2113?tls=false&tlsVerifyCert=false"));
+                        "esdb://admin:changeit@esdb-local:2113?tls=false&tlsVerifyCert=false"));
     }
 }

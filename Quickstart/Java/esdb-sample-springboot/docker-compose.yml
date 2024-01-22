@@ -1,5 +1,5 @@
 services:
-  esdbsamplespringboot:
+  esdb-sample-springboot:
     image: esdb-sample-springboot
     build:
       context: .
@@ -7,17 +7,17 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - esdblocalnet
+      - esdb-local-net
     depends_on:
-      esdblocal:
+      esdb-local:
         condition: service_started
-  esdblocal:
+  esdb-local:
     image: eventstore/eventstore:latest
     environment:
       EVENTSTORE_INSECURE: true
     ports:
       - "2113:2113"
     networks:
-      - esdblocalnet
+      - esdb-local-net
 networks:
-  esdblocalnet:
+  esdb-local-net:

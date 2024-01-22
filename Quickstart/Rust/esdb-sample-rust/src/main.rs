@@ -15,7 +15,7 @@ struct VisitorGreeted {
 }
 
 const CONNECTION_STRING: &str =
-    "esdb://admin:changeit@esdblocal:2113?tls=false&tlsVerifyCert=false";
+    "esdb://admin:changeit@esdb-local:2113?tls=false&tlsVerifyCert=false";
 const VISITORS_STREAM: &str = "visitors-stream";
 
 #[rocket::main]
