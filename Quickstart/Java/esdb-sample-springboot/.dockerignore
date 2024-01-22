@@ -3,7 +3,7 @@
 **/.gitignore
 **/docker-compose*
 **/Dockerfile*
-**/target
-**/build
+**/target/
+**/build/
 LICENSE
 README.md
