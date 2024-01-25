@@ -1,90 +1,78 @@
-# Accessing Data with EventStore 
+# Spring Boot Sample: Hello, World!
 
-This guide walks you through creating a "`Hello, world!`" app with Spring
-Boot (with actuator) and EventStore. The service accepts the following HTTP GET request:
+This guide shows you how to stand up a sample Hello World application, built with [Spring Boot](https://spring.io/projects/spring-boot/), that connects to EventStoreDB.
 
-``` [source,sh]
-$ curl http://localhost:9000/hello-world
-```
+The sample exposes a simple HTTP endpoint `http://localhost:8080/hello-world?visitor={visitor}` that shows how to append to and read from a stream in EventStoreDB.
 
+When a visitor says hello via `hello-world?visitor={visitor}`, an event is appended to a stream to record the fact they have been greeted.
 
-It responds with the following JSON:
+The stream is then read from beginning to end to return the full log of visitors on each call to `/hello-world?visitor={visitor}`.
 
-``` [source,json]
-{
-"id": "bb657c09-6603-4b7a-b417-14ae2824744a",
-"content": "Hello, Visitor!"
-}
-```
+You can see how this is done in the source code [here](./src/main/java/com/example/esdbsamplespringboot/HelloWorldController.java).
 
-## What You Need
+## Prerequisites
 
-* About 15 minutes
+Before running the application, make sure you have the following installed on your system:
 
-* A favorite text editor or IDE
+- Docker: [Get Docker](https://docs.docker.com/get-docker/)
+- Docker Compose: [Install Docker Compose](https://docs.docker.com/compose/install/)
 
-* [Java 1.8 ](https://openjdk.org/projects/jdk8/)
+## Running The Sample
 
-* [Gradle 8.0+](https://gradle.org/install/) or [Maven 3.5+](https://maven.apache.org/download.cgi)
+1. Clone the repository:
 
+   ```
+   git clone https://github.com/EventStore/samples.git
+   cd samples/Quickstart/Java/esdb-sample-springboot
+   ```
 
-## Build and run
+2. Run the application and database using Docker Compose:
 
-### Start the EventStore server
+    ```
+    docker compose up -d
+    ```
 
-Pull a docker image from: https://hub.docker.com/r/eventstore/eventstore/
+3. Verify the containers are up and running:
 
-Run EventStore in Docker with: 
-``` [source,sh]
-docker run --name esdb-node -it -p 2113:2113 -p 1113:1113 \
-    eventstore/eventstore:latest --insecure  --enable-atom-pub-over-http --runprojections=all
-```
+    ```
+    docker compose ps
+    ```
 
-Verify that the database is up and running by going to the EventStore dashboard at: http://localhost:2113/
+    Output:
+    ```
+    NAME                                              IMAGE                          ...   STATUS                   PORTS
+    esdb-sample-springboot-esdb-local-1               eventstore/eventstore:latest   ...   Up 7 seconds (healthy)   1112-1113/tcp, 0.0.0.0:2113->2113/tcp
+    esdb-sample-springboot-esdb-sample-springboot-1   esdb-sample-springboot         ...   Up 7 seconds             0.0.0.0:8080->8080/tcp
+    ```
 
+4. Test the application:
 
-### Build and run the sample app
+    Say hello as `Ouro`:
+    ```
+    curl localhost:8080/hello-world?visitor=Ouro
+    ```
 
-For Maven, build the JAR file with `./mvnw clean package` and then run with:
-``` [source,sh]
-java -jar target/esdb-sample-springboot.0.0.1.jar
-```
+    Say hello as `YourName`:
+    ```
+    curl localhost:8080/hello-world?visitor=YourName
+    ```
 
-For Gradle, build the JAR file with `./gradlew clean build` and then run with:
-``` [source,sh]
-java -jar build/libs/esdb-sample-springboot.0.0.1.jar
-```
+    Output:
+    ```
+    1 visitors have been greeted, they are: [Ouro]
+    ```
+    ```
+    2 visitors have been greeted, they are: [Ouro, YourName]
+    ```
 
-## Test the app manually
+5. To stop and remove the containers, use:
 
-For the visitorGreeted service default, curl or point a web browser to:
-```
-http://localhost:9000/hello-world
-```
+    ```
+    docker compose down
+    ```
 
-``` [source,bash]
-$ curl http://localhost:9000/hello-world
-{"id":"c615db58-8f5d-427e-8be6-39e849b68a5e","content":"Hello, Visitor!"}
-```
+## Additional Information
 
-
-To greet Nefertiti, curl or point a web browser to:
-```
-http://localhost:9000/hello-world?name=Nefertiti
-```
-
-``` [source,bash]
-$ curl "http://localhost:9000/hello-world?name=Nefertiti"
-{"id":"074979e1-5aa3-47ce-8dc3-e898e748a067","content":"Hello, Nefertiti!"}
-```
-
-For the visitorGreeted service heartbeat, curl or point a web browser to:
-```
-http://localhost:9001/actuator/health
-```
-
-``` [source,bash]
-$ curl http://localhost:9001/actuator/health
-{"status":"UP"}
-```
-
+For more in-depth and detailed examples of using EventStoreDB and the Java Client, refer to:
+- EventStoreDB: [Getting Started With EventStoreDB](https://developers.eventstore.com/clients/grpc/)
+- Java Client: [Java Client Samples](https://github.com/EventStore/EventStoreDB-Client-Java/tree/trunk/db-client-java/src/test/java/com/eventstore/dbclient/samples)
