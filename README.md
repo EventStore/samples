@@ -18,23 +18,18 @@ Read more in the [Contribution Guidelines](./CONTRIBUTING.md)
 
 Samples are organized by topics in dedicated directories by programming languages/environments.
 
-### **[Go Quickstart](./Quickstart/Go)**
-- See the [Go](/Quickstart/Go/esdb-sample-go) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
+### Quickstart
 
-### **[Java Quickstart](./Quickstart/Java)**
-- See the [Spring Boot](Quickstart/Java/esdb-sample-springboot) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
+Quickstart guides have been created that show you how to stand up a sample Hello World application that appends to and reads from a stream in EventStoreDB.
 
-### **[.NET Quickstart](./Quickstart/.NET)**
-- See the [.NET](/Quickstart/.NET/esdb-sample-dotnet) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
+Find the sample for your preferred client language below:
 
-### **[Node.js Quickstart](./Quickstart/Nodejs)**
-- See the [Node.js](/Quickstart/Nodejs/esdb-sample-nodejs) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
-
-### **[Python Quickstart](./Quickstart/Python)**
-- See the [Python](/Quickstart/Python/esdb-sample-python) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
-
-### **[Rust Quickstart](./Quickstart/Rust)**
-- See the [Rust](/Quickstart/Rust/esdb-sample-rust) sample that shows how to connect to an insecure EventStoreDB instance, append to a stream and read from a stream.
+- .NET: [ASP.NET Core sample](/Quickstart/.NET/esdb-sample-dotnet)
+- Go: [Gin sample](/Quickstart/Go/esdb-sample-go)
+- Java: [Spring Boot sample](Quickstart/Java/esdb-sample-springboot)
+- Node.js: [Express.js sample](/Quickstart/Nodejs/esdb-sample-nodejs)
+- Python: [Flask sample](/Quickstart/Python/esdb-sample-python)
+- Rust: [Rocket sample](/Quickstart/Rust/esdb-sample-rust)
 
 ### **[CQRS flow](./CQRS_Flow/)** 
 - [.NET](./CQRS_Flow/.NET/)
