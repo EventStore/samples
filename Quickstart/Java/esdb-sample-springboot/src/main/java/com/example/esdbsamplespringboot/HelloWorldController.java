@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.eventstore.dbclient.*;
-
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class HelloWorldController {
     private static final String VISITORS_STREAM = "visitors-stream";
+    private static final Gson gson = new Gson();
     private final EventStoreDBClient eventStore;
 
     @Autowired
@@ -44,9 +45,9 @@ public class HelloWorldController {
 
             List<String> visitorsGreeted = new ArrayList<>();
             for (ResolvedEvent re : eventStream.getEvents()) {
-                VisitorGreeted vg = re
-                        .getOriginalEvent()
-                        .getEventDataAs(VisitorGreeted.class);
+                VisitorGreeted vg = gson.fromJson(
+                        new String(re.getOriginalEvent().getEventData()),
+                        VisitorGreeted.class);
 
                 visitorsGreeted.add(vg.getVisitor());
             }
