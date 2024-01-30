@@ -1,0 +1,10 @@
+[package]
+name = "esdb-sample-rust"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+eventstore = "2.3.0"
+rocket = "0.5.0"
+serde = "1.0.195"
+uuid = { version = "1.7.0" }

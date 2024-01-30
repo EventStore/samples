@@ -1,0 +1,9 @@
+**/.dockerignore
+**/.git
+**/.gitignore
+**/docker-compose*
+**/Dockerfile*
+**/target/
+**/build/
+LICENSE
+README.md

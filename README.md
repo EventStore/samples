@@ -18,10 +18,18 @@ Read more in the [Contribution Guidelines](./CONTRIBUTING.md)
 
 Samples are organized by topics in dedicated directories by programming languages/environments.
 
-### [Java quickstart](./quickstart/)
-- a [plain java](/quickstart/simplejava) example to connect to EventStoreDB, append to a stream and read from a stream.
-- a [Springboot "Hello World"](quickstart/simplespringboot) example to connect to EventStoreDB, append to a stream and read from a stream.
+### Quickstart
 
+Quickstart guides have been created that show you how to stand up a sample Hello World application that appends to and reads from a stream in EventStoreDB.
+
+Find the sample for your preferred client language below:
+
+- .NET: [ASP.NET Core sample](/Quickstart/.NET/esdb-sample-dotnet)
+- Go: [Gin sample](/Quickstart/Go/esdb-sample-go)
+- Java: [Spring Boot sample](Quickstart/Java/esdb-sample-springboot)
+- Node.js: [Express.js sample](/Quickstart/Nodejs/esdb-sample-nodejs)
+- Python: [Flask sample](/Quickstart/Python/esdb-sample-python)
+- Rust: [Rocket sample](/Quickstart/Rust/esdb-sample-rust)
 
 ### **[CQRS flow](./CQRS_Flow/)** 
 - [.NET](./CQRS_Flow/.NET/)
