@@ -23,7 +23,7 @@ Before running the application, make sure you have the following installed on yo
 
    ```
    git clone https://github.com/EventStore/samples.git
-   cd samples/Quickstart/Node.js/esdb-sample-nodejs
+   cd samples/Quickstart/Nodejs/esdb-sample-nodejs
    ```
 
 2. Run the application and database using Docker Compose:
