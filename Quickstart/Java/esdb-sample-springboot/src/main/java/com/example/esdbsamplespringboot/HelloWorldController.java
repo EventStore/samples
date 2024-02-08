@@ -9,28 +9,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.eventstore.dbclient.*;
 import com.google.gson.Gson;
+
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class HelloWorldController {
     private static final String VISITORS_STREAM = "visitors-stream";
-    private static final Gson gson = new Gson();
     private final EventStoreDBClient eventStore;
+    private final Gson gsonMapper;
 
     @Autowired
-    public HelloWorldController(EventStoreDBClient eventStore) {
+    public HelloWorldController(EventStoreDBClient eventStore, Gson gsonMapper) {
         this.eventStore = eventStore;
+        this.gsonMapper = gsonMapper;
     }
 
     @ResponseBody
-	@GetMapping("/hello-world")
-	public ResponseEntity<?> sayHello(@RequestParam(name="visitor", required=false, defaultValue="Visitor") String visitor) {
+    @GetMapping("/hello-world")
+    public ResponseEntity<?> sayHello(@RequestParam(name = "visitor", required = false, defaultValue = "Visitor") String visitor) {
         try {
             VisitorGreeted visitorGreeted = new VisitorGreeted(visitor);
 
+            byte[] vgBytes = gsonMapper.toJson(visitorGreeted).getBytes();
             EventData event = EventData
-                    .builderAsJson("VisitorGreeted", visitorGreeted)
+                    .builderAsJson("VisitorGreeted", vgBytes)
                     .build();
 
             WriteResult writeResult = eventStore
@@ -45,7 +49,7 @@ public class HelloWorldController {
 
             List<String> visitorsGreeted = new ArrayList<>();
             for (ResolvedEvent re : eventStream.getEvents()) {
-                VisitorGreeted vg = gson.fromJson(
+                VisitorGreeted vg = gsonMapper.fromJson(
                         new String(re.getOriginalEvent().getEventData()),
                         VisitorGreeted.class);
 
@@ -61,7 +65,7 @@ public class HelloWorldController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-	}
+    }
 
     static class VisitorGreeted {
         private String visitor;
