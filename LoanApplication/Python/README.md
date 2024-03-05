@@ -60,4 +60,4 @@ Or:
 python3 LoanRequestor.py
 ```
 
-Check out 
+Check out our QuickStart video series on YouTube to see how everything works
