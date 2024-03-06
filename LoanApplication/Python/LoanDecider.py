@@ -65,6 +65,9 @@ for credit_check_event in catchup_subscription:
     # Introduce some delay
     time.sleep(5)
     
+    # Get the current commit version for the stream to which we will append
+    COMMIT_VERSION = esdb.get_current_version(stream_name=credit_check_event.stream_name)
+    
     if config.DEBUG:
         print('  Received event: id=' + str(credit_check_event.id) + '; type=' + credit_check_event.type + '; stream_name=' + str(credit_check_event.stream_name) + '; data=\'' +  str(credit_check_event.data) + '\'')
 
@@ -109,8 +112,6 @@ for credit_check_event in catchup_subscription:
     
     print('  Processing loan decision for ' + _state_data['User'] + ' with Score of ' + str(_state_data['Score']) + ' - ' + _decision_event_type + '\n  Appending to stream: ' + credit_check_event.stream_name + '\n')
     
-    # Get the current commit version for the stream to which we will append
-    COMMIT_VERSION = esdb.get_current_version(stream_name=credit_check_event.stream_name)
     # Append the decision event to the stream
     CURRENT_POSITION = esdb.append_to_stream(stream_name=credit_check_event.stream_name, current_version=COMMIT_VERSION, events=[decision_event])
 

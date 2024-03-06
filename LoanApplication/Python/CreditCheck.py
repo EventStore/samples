@@ -54,6 +54,9 @@ persistent_subscription = esdb.read_subscription_to_stream(group_name=config.GRO
 for loan_request_event in persistent_subscription:
     # Introduce some delay
     time.sleep(5)
+    
+    # Get the current commit version of the loan request stream for this loan request
+    COMMIT_VERSION = esdb.get_current_version(stream_name=loan_request_event.stream_name)
 
     if config.DEBUG:
         print('  Received event: id=' + str(loan_request_event.id) + '; type=' + loan_request_event.type + '; stream_name=' + str(loan_request_event.stream_name) + '; data=\'' +  str(loan_request_event.data) + '\'')
@@ -88,8 +91,6 @@ for loan_request_event in persistent_subscription:
     
     print('  Processing credit check - CreditChecked for NationalID ' + str(_credit_checked_event_data["NationalID"]) + ' with a Score of ' + str(_credit_checked_event_data["Score"]))
 
-    # Get the current commit version of the loan request stream for this loan request
-    COMMIT_VERSION = esdb.get_current_version(stream_name=loan_request_event.stream_name)
     # Append the event to the stream
     CURRENT_POSITION = esdb.append_to_stream(stream_name=loan_request_event.stream_name, current_version=COMMIT_VERSION, events=[credit_checked_event])
 
