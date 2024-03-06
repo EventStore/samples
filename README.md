@@ -24,7 +24,7 @@ Quickstart guides have been created that show you how to stand up a sample Hello
 
 Find the sample for your preferred client language below:
 
-- .NET: [ASP.NET Core sample](/Quickstart/.NET/esdb-sample-dotnet)
+- .NET: [ASP.NET Core sample](/Quickstart/Dotnet/esdb-sample-dotnet)
 - Go: [Gin sample](/Quickstart/Go/esdb-sample-go)
 - Java: [Spring Boot sample](Quickstart/Java/esdb-sample-springboot)
 - Node.js: [Express.js sample](/Quickstart/Nodejs/esdb-sample-nodejs)
@@ -32,7 +32,7 @@ Find the sample for your preferred client language below:
 - Rust: [Rocket sample](/Quickstart/Rust/esdb-sample-rust)
 
 ### **[CQRS flow](./CQRS_Flow/)** 
-- [.NET](./CQRS_Flow/.NET/)
+- [.NET](./CQRS_Flow/Dotnet/)
 
   **Description**:
   - Demonstrates typical event sourcing with CQRS flow
@@ -58,7 +58,7 @@ Find the sample for your preferred client language below:
 
 
 ### **[Crypto Shredding](./Crypto_Shredding/)** 
-- [.NET](./Crypto_Shredding/.NET/)
+- [.NET](./Crypto_Shredding/Dotnet/)
 
   **Description**:
   - Shows how to protect sensitive data (e.g. for [European General Data Protection Regulation](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation)) in Event-Sourced Systems.

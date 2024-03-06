@@ -23,7 +23,7 @@ Before running the application, make sure you have the following installed on yo
 
    ```
    git clone https://github.com/EventStore/samples.git
-   cd samples/Quickstart/.NET/esdb-sample-dotnet
+   cd samples/Quickstart/Dotnet/esdb-sample-dotnet
    ```
 
 2. Run the application and database using Docker Compose:
@@ -49,12 +49,12 @@ Before running the application, make sure you have the following installed on yo
 
     Say hello as `Ouro`:
     ```
-    curl localhost:8080/hello-world?visitor=Ouro
+    curl "localhost:8080/hello-world?visitor=Ouro"
     ```
 
     Say hello as `YourName`:
     ```
-    curl localhost:8080/hello-world?visitor=YourName
+    curl "localhost:8080/hello-world?visitor=YourName"
     ```
 
     Output:

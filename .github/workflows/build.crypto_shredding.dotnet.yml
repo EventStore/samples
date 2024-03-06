@@ -8,7 +8,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./Crypto_Shredding/.NET
+    working-directory: ./Crypto_Shredding/Dotnet
 
 jobs:
   build:

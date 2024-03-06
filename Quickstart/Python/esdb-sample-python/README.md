@@ -49,12 +49,12 @@ Before running the application, make sure you have the following installed on yo
 
     Say hello as `Ouro`:
     ```
-    curl localhost:8080/hello-world?visitor=Ouro
+    curl "localhost:8080/hello-world?visitor=Ouro"
     ```
 
     Say hello as `YourName`:
     ```
-    curl localhost:8080/hello-world?visitor=YourName
+    curl "localhost:8080/hello-world?visitor=YourName"
     ```
 
     Output:
