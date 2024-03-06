@@ -64,6 +64,12 @@ print('Waiting for events')
 
 # For each event received through the subscription (note: this is a blocking operation)
 for decision_needed_event in catchup_subscription:
+    # Introduce some delay
+    time.sleep(5)
+    
+    # Get the commit version to use for appending the decision event
+    COMMIT_VERSION = esdb.get_current_version(stream_name=decision_needed_event.stream_name)
+
     if config.DEBUG:
         print('  Received event: id=' + str(decision_needed_event.id) + '; type=' + decision_needed_event.type + '; stream_name=' + str(decision_needed_event.stream_name) + '; data=\'' +  str(decision_needed_event.data) + '\'')
 
@@ -116,8 +122,6 @@ for decision_needed_event in catchup_subscription:
     else:
         print('  Processing loan decision - ' + _decision_event_type + '\n')
     
-    # Get the commit version to use for appending the decision event
-    COMMIT_VERSION = esdb.get_current_version(stream_name=decision_needed_event.stream_name)
     # Append the decision event
     CURRENT_POSITION = esdb.append_to_stream(stream_name=decision_needed_event.stream_name, current_version=COMMIT_VERSION, events=[decision_event])
 
