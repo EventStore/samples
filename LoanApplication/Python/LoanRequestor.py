@@ -7,6 +7,7 @@ import config
 import time
 import traceback
 import uuid
+import datetime
 
 # Create some variables to hold state with the GUI
 esdb = None
@@ -45,7 +46,7 @@ class LoanRequestorPanel(wx.Frame):
 
         # Add the panel to the window, and create a grid to hold the labels, inputs, and button
         panel = wx.Panel(self)        
-        field_grid = wx.GridSizer(rows=5, cols=2, hgap=5, vgap=5)  
+        field_grid = wx.GridSizer(rows=10, cols=2, hgap=5, vgap=5)  
 
         # Create fields and labels for the User, NationalID, and Amount data
         self.field_user = wx.TextCtrl(panel)
@@ -54,6 +55,16 @@ class LoanRequestorPanel(wx.Frame):
         self.label_nationalid = wx.StaticText(panel, wx.ID_ANY, 'NationalID')
         self.field_amount = wx.TextCtrl(panel)
         self.label_amount = wx.StaticText(panel, wx.ID_ANY, 'Amount')
+        self.field_address = wx.TextCtrl(panel)
+        self.label_address = wx.StaticText(panel, wx.ID_ANY, 'Address')
+        self.field_city = wx.TextCtrl(panel)
+        self.label_city = wx.StaticText(panel, wx.ID_ANY, 'City')
+        self.field_region = wx.TextCtrl(panel)
+        self.label_region = wx.StaticText(panel, wx.ID_ANY, 'Region')
+        self.field_country = wx.TextCtrl(panel)
+        self.label_country = wx.StaticText(panel, wx.ID_ANY, 'Country')
+        self.field_postal = wx.TextCtrl(panel)
+        self.label_postal = wx.StaticText(panel, wx.ID_ANY, 'Postal Code')
 
         # Create a read-only field and label for the LoanRequestID data, which we'll set to a UUID
         self.field_loanrequestid = wx.TextCtrl(panel, style=wx.TE_READONLY)
@@ -66,6 +77,16 @@ class LoanRequestorPanel(wx.Frame):
         field_grid.Add(self.field_nationalid, 0, wx.ALL | wx.EXPAND)
         field_grid.Add(self.label_amount, 0, wx.ALL | wx.EXPAND)
         field_grid.Add(self.field_amount, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.label_address, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.field_address, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.label_city, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.field_city, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.label_region, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.field_region, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.label_country, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.field_country, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.label_postal, 0, wx.ALL | wx.EXPAND)
+        field_grid.Add(self.field_postal, 0, wx.ALL | wx.EXPAND)
         field_grid.Add(self.label_loanrequestid, 0, wx.ALL | wx.EXPAND)
         field_grid.Add(self.field_loanrequestid, 0, wx.ALL | wx.EXPAND)
         
@@ -94,14 +115,21 @@ class LoanRequestorPanel(wx.Frame):
         _user = self.field_user.GetValue()
         _nationalid = self.field_nationalid.GetValue()
         _amount = self.field_amount.GetValue()
+        _address = self.field_address.GetValue()
+        _city = self.field_city.GetValue()
+        _region = self.field_region.GetValue()
+        _country = self.field_country.GetValue()
+        _postal = self.field_postal.GetValue()
         _loanrequestid = self.field_loanrequestid.GetValue()
+        _ts = str(datetime.datetime.now())
 
         # Create a dictionary for the event data, and compose the stream name to which we will append it
-        _loan_request_data = {"User": _user, "NationalID": _nationalid, "Amount": _amount, "LoanRequestID": _loanrequestid}
+        _loan_request_data = {"User": _user, "NationalID": _nationalid, "Amount": _amount, "LoanRequestID": _loanrequestid, "LoanRequestedTimestamp": _ts, "RequestorAddress": _address, "RequestorCity": _city, "RequestorRegion": _region, "RequestorCountry": _country, "RequestorPostalCode": _postal}
+        _loan_request_metadata = {"$correlationId": _loanrequestid, "$causationId": _loanrequestid, "transactionTimestamp": _ts}
         _loan_request_stream_name = config.STREAM_PREFIX + '-' + _loanrequestid
 
         # Create a loan request event
-        loan_request_event = NewEvent(type=config.EVENT_TYPE_LOAN_REQUESTED, data=bytes(json.dumps(_loan_request_data), 'utf-8'), id=_loanrequestid)
+        loan_request_event = NewEvent(type=config.EVENT_TYPE_LOAN_REQUESTED, metadata=bytes(json.dumps(_loan_request_metadata), 'utf-8'), data=bytes(json.dumps(_loan_request_data), 'utf-8'), id=_loanrequestid)
         
         print('Command Received - LoanRequested: ' + str(_loan_request_data) + '\n  Appending to stream: ' + _loan_request_stream_name)
         
@@ -112,6 +140,11 @@ class LoanRequestorPanel(wx.Frame):
         self.field_user.SetValue('')
         self.field_nationalid.SetValue('')
         self.field_amount.SetValue('')
+        self.field_address.SetValue('')
+        self.field_city.SetValue('')
+        self.field_region.SetValue('')
+        self.field_country.SetValue('')
+        self.field_postal.SetValue('')
         self.field_loanrequestid.SetValue(str(uuid.uuid4()))
 
 # Create a GUI panel to show submitted and approved / denied applications

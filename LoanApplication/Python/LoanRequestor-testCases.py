@@ -5,6 +5,7 @@ import config
 import time
 import traceback
 import uuid
+import datetime
 
 # Print some information for the user
 print("\n\n***** Loan Request Command Processor *****\n")
@@ -31,30 +32,39 @@ while True:
 
 # Let's create some event data that will be appended to ESDB streams, simulating loan approval requests
 _loan_request_data = []
+_loan_request_metadata = []
 _loan_request_stream_name = []
 _loan_request_uuid = []
 
 # Simulate an automatically approved loan
 _uuid = str(uuid.uuid4())
-_loan_request_data.append({"User": "Yves", "NationalID": 12345, "Amount": 10000, "LoanRequestID": _uuid})
+_ts = str(datetime.datetime.now())
+_loan_request_data.append({"User": "Yves", "NationalID": 12345, "Amount": 10000, "LoanRequestID": _uuid, "LoanRequestedTimestamp": _ts, "RequestorAddress": "123 Outta My Way", "RequestorCity": "Anytown", "RequestorRegion": "Wideopen", "RequestorCountry": "Fakeland", "RequestorPostalCode": "ABC 123"})
+_loan_request_metadata.append({"$correlationId": _uuid, "$causationId": _uuid, "transactionTimestamp": _ts})
 _loan_request_stream_name.append(config.STREAM_PREFIX + '-' + _uuid)
 _loan_request_uuid.append(_uuid)
  
 # Simulate a loan requiring manual approval / denial
 _uuid = str(uuid.uuid4())
-_loan_request_data.append({"User": "Tony", "NationalID": 54321, "Amount": 5000, "LoanRequestID": _uuid})
+_ts = str(datetime.datetime.now())
+_loan_request_data.append({"User": "Tony", "NationalID": 54321, "Amount": 5000, "LoanRequestID": _uuid, "LoanRequestedTimestamp": _ts, "RequestorAddress": "456 Some Street", "RequestorCity": "Prettyville", "RequestorRegion": "Wideopen", "RequestorCountry": "Fakeland", "RequestorPostalCode": "DEF 342"})
+_loan_request_metadata.append({"$correlationId": _uuid, "$causationId": _uuid, "transactionTimestamp": _ts})
 _loan_request_stream_name.append(config.STREAM_PREFIX + '-' + _uuid)
 _loan_request_uuid.append(_uuid)
 
 # Simulate another loan requiring manual approval / denial
 _uuid = str(uuid.uuid4())
-_loan_request_data.append({"User": "David", "NationalID": 43521, "Amount": 5000, "LoanRequestID": _uuid})
+_ts = str(datetime.datetime.now())
+_loan_request_data.append({"User": "David", "NationalID": 43521, "Amount": 5000, "LoanRequestID": _uuid, "LoanRequestedTimestamp": _ts, "RequestorAddress": "789 Back Lane", "RequestorCity": "Smalltown", "RequestorRegion": "Wideopen", "RequestorCountry": "Fakeland", "RequestorPostalCode": "GHJ 876"})
+_loan_request_metadata.append({"$correlationId": _uuid, "$causationId": _uuid, "transactionTimestamp": _ts})
 _loan_request_stream_name.append(config.STREAM_PREFIX + '-' + _uuid)
 _loan_request_uuid.append(_uuid)
 
 # Simulate a loan that is automatically denied
 _uuid = str(uuid.uuid4())
-_loan_request_data.append({"User": "Rob", "NationalID": 34251, "Amount": 3000, "LoanRequestID": _uuid})
+_ts = str(datetime.datetime.now())
+_loan_request_data.append({"User": "Rob", "NationalID": 34251, "Amount": 3000, "LoanRequestID": _uuid, "LoanRequestedTimestamp": _ts, "RequestorAddress": "742 Evergreen Terrace", "RequestorCity": "Springton", "RequestorRegion": "Wideopen", "RequestorCountry": "Fakeland", "RequestorPostalCode": "TSE 184"})
+_loan_request_metadata.append({"$correlationId": _uuid, "$causationId": _uuid, "transactionTimestamp": _ts})
 _loan_request_stream_name.append(config.STREAM_PREFIX + '-' + _uuid)
 _loan_request_uuid.append(_uuid)
 
@@ -63,7 +73,7 @@ loop_counter = 0
 # Loop through the samples and append events into the ESDB streams
 while loop_counter < len(_loan_request_data):
     # Create a loan request event
-    loan_request_event = NewEvent(type=config.EVENT_TYPE_LOAN_REQUESTED, data=bytes(json.dumps(_loan_request_data[loop_counter]), 'utf-8'), id=_loan_request_uuid[loop_counter])
+    loan_request_event = NewEvent(type=config.EVENT_TYPE_LOAN_REQUESTED, metadata=bytes(json.dumps(_loan_request_metadata[loop_counter]), 'utf-8'), data=bytes(json.dumps(_loan_request_data[loop_counter]), 'utf-8'), id=_loan_request_uuid[loop_counter])
     
     print('Command Received - LoanRequested: ' + str(_loan_request_data[loop_counter]) + '\n  Appending to stream: ' + _loan_request_stream_name[loop_counter])
     
@@ -71,7 +81,7 @@ while loop_counter < len(_loan_request_data):
     CURRENT_POSITION = esdb.append_to_stream(stream_name=_loan_request_stream_name[loop_counter], current_version=StreamState.ANY, events=[loan_request_event])
 
     # Wait a few seconds to let the event wind through the system
-    time.sleep(10)
+    time.sleep(20)
 
     # Increment the loop counter
     loop_counter+=1
