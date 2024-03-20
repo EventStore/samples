@@ -4,6 +4,8 @@ import json
 import config
 import time
 import traceback
+import datetime
+import random
 
 # Print some information messages to the user
 print("\n\n***** CreditCheck *****\n")
@@ -53,13 +55,17 @@ persistent_subscription = esdb.read_subscription_to_stream(group_name=config.GRO
 # For each eent received
 for loan_request_event in persistent_subscription:
     # Introduce some delay
-    time.sleep(5)
+    time.sleep(config.CLIENT_PRE_WORK_DELAY)
 
     if config.DEBUG:
         print('  Received event: id=' + str(loan_request_event.id) + '; type=' + loan_request_event.type + '; stream_name=' + str(loan_request_event.stream_name) + '; data=\'' +  str(loan_request_event.data) + '\'')
 
+    # Get the current commit version of the loan request stream for this loan request
+    COMMIT_VERSION = esdb.get_current_version(stream_name=loan_request_event.stream_name)
+
     # Get the event data out of JSON format and into a python dictionary so we can use it
     _loan_request_data = json.loads(loan_request_event.data)
+    _loan_request_metadata = json.loads(loan_request_event.metadata)
 
     # Create a data structure to hold the credit score that we will return
     _credit_score = -1
@@ -76,20 +82,21 @@ for loan_request_event in persistent_subscription:
         _credit_score = 1
     # If we can't map the user name to one of the above, send for manual processing
     else:
-        _credit_score = 5
+        _credit_score = random.randint(1,10)
+
+    _ts = str(datetime.datetime.now())
 
     # Create a dictionary with the credit check data
-    _credit_checked_event_data = {"Score": _credit_score, "NationalID": _loan_request_data.get("NationalID")}
+    _credit_checked_event_data = {"Score": _credit_score, "NationalID": _loan_request_data.get("NationalID"), "CreditCheckedTimestamp": _ts}
+    _credit_checked_event_metadata = {"$correlationId": _loan_request_metadata.get("$correlationId"), "$causationId": str(loan_request_event.id), "transactionTimestamp": _ts}
     # Create a credit checked event with the event data
-    credit_checked_event = NewEvent(type=config.EVENT_TYPE_CREDIT_CHECKED, data=bytes(json.dumps(_credit_checked_event_data), 'utf-8'))
+    credit_checked_event = NewEvent(type=config.EVENT_TYPE_CREDIT_CHECKED, metadata=bytes(json.dumps(_credit_checked_event_metadata), 'utf-8'), data=bytes(json.dumps(_credit_checked_event_data), 'utf-8'))
     
     if config.DEBUG:
         print('  Processing credit check - CreditChecked: ' + str(_credit_checked_event_data) + '\n')
     
     print('  Processing credit check - CreditChecked for NationalID ' + str(_credit_checked_event_data["NationalID"]) + ' with a Score of ' + str(_credit_checked_event_data["Score"]))
 
-    # Get the current commit version of the loan request stream for this loan request
-    COMMIT_VERSION = esdb.get_current_version(stream_name=loan_request_event.stream_name)
     # Append the event to the stream
     CURRENT_POSITION = esdb.append_to_stream(stream_name=loan_request_event.stream_name, current_version=COMMIT_VERSION, events=[credit_checked_event])
 
@@ -97,5 +104,5 @@ for loan_request_event in persistent_subscription:
     persistent_subscription.ack(loan_request_event.ack_id)
 
     # Introduce some delay
-    time.sleep(5)
+    time.sleep(config.CLIENT_POST_WORK_DELAY)
 

@@ -4,6 +4,7 @@ import json
 import config
 import time
 import traceback
+import datetime
 
 # Print some messages for the user
 print("\n\n***** LoanDecider *****\n")
@@ -63,10 +64,16 @@ print('Waiting for events')
 # For each event in the subscription
 for credit_check_event in catchup_subscription:
     # Introduce some delay
-    time.sleep(5)
+    time.sleep(config.CLIENT_PRE_WORK_DELAY)
     
     if config.DEBUG:
         print('  Received event: id=' + str(credit_check_event.id) + '; type=' + credit_check_event.type + '; stream_name=' + str(credit_check_event.stream_name) + '; data=\'' +  str(credit_check_event.data) + '\'')
+
+    # Get the current commit version for the stream to which we will append
+    COMMIT_VERSION = esdb.get_current_version(stream_name=credit_check_event.stream_name)
+
+    # Get the metadata for the credit check event
+    _credit_check_metadata = json.loads(credit_check_event.metadata)
 
     # We need to reconstruct state so that we can decide whether to automatically or manually process the loan, and push it onwards for further processing
     # Read the stream for this loan request
@@ -99,18 +106,20 @@ for credit_check_event in catchup_subscription:
     else:
         _decision_event_type = config.EVENT_TYPE_LOAN_AUTO_DENIED
 
+    _ts = str(datetime.datetime.now())
+
     # Create a dictionary holding the elements of the loan decision
-    _decision_event_data = {"LoanRequestID": _state_data.get("LoanRequestID")}
+    _decision_event_data = {"LoanRequestID": _state_data.get("LoanRequestID"), "LoanAutomatedDecisionTimestamp": _ts}
+    _decision_event_metadata = {"$correlationId": _credit_check_metadata.get("$correlationId"), "$causationId": str(credit_check_event.id), "transactionTimestamp": _ts}
+
     # Create a decision event
-    decision_event = NewEvent(type=_decision_event_type, data=bytes(json.dumps(_decision_event_data), 'utf-8'))
+    decision_event = NewEvent(type=_decision_event_type, metadata=bytes(json.dumps(_decision_event_metadata), 'utf-8'), data=bytes(json.dumps(_decision_event_data), 'utf-8'))
 
     if config.DEBUG:
         print('  Processing loan decision - ' + _decision_event_type + ': ' + str(_decision_event_data) + '\n')
     
     print('  Processing loan decision for ' + _state_data['User'] + ' with Score of ' + str(_state_data['Score']) + ' - ' + _decision_event_type + '\n  Appending to stream: ' + credit_check_event.stream_name + '\n')
     
-    # Get the current commit version for the stream to which we will append
-    COMMIT_VERSION = esdb.get_current_version(stream_name=credit_check_event.stream_name)
     # Append the decision event to the stream
     CURRENT_POSITION = esdb.append_to_stream(stream_name=credit_check_event.stream_name, current_version=COMMIT_VERSION, events=[decision_event])
 
@@ -124,5 +133,5 @@ for credit_check_event in catchup_subscription:
         print('  Checkpoint: ' + str(credit_check_event.link.stream_position) + '\n')
 
     # Introduce some delay
-    time.sleep(5)
+    time.sleep(config.CLIENT_POST_WORK_DELAY)
 

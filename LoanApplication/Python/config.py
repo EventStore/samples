@@ -12,7 +12,12 @@ EVENT_TYPE_LOAN_MANUAL_APPROVED = "LoanManuallyApproved"
 EVENT_TYPE_LOAN_MANUAL_DENIED = "LoanManuallyDenied"
 
 # Enable DEBUG mode to see debug messages printed onto the console
-DEBUG = True
+DEBUG = False
+CLIENT_PRE_WORK_DELAY = 5
+CLIENT_POST_WORK_DELAY = 5
+AUTOMATED_UNDERWRITING = False
+UNDERWRITING_USERS = ['John','Jane']
+UNDERWRITING_ANSWERS = ['Y','N']
 
 # Connection URL for ESDB
 ESDB_URL = "esdb://localhost:2113?Tls=false"

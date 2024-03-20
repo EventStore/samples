@@ -4,6 +4,8 @@ import json
 import config
 import time
 import traceback
+import datetime
+import random
 
 # Print some information for the user
 print("\n\n***** Underwriting *****\n")
@@ -64,8 +66,17 @@ print('Waiting for events')
 
 # For each event received through the subscription (note: this is a blocking operation)
 for decision_needed_event in catchup_subscription:
+    # Introduce some delay
+    time.sleep(config.CLIENT_PRE_WORK_DELAY)
+    
     if config.DEBUG:
         print('  Received event: id=' + str(decision_needed_event.id) + '; type=' + decision_needed_event.type + '; stream_name=' + str(decision_needed_event.stream_name) + '; data=\'' +  str(decision_needed_event.data) + '\'')
+
+    # Get the commit version to use for appending the decision event
+    COMMIT_VERSION = esdb.get_current_version(stream_name=decision_needed_event.stream_name)
+    
+    # Get the metadata of the decision needed event, which will serve as the basis for the metadata of the decision event
+    _decision_needed_metadata = json.loads(decision_needed_event.metadata)
 
     # We need to build a read model for the Underwriter. Get the stream of events from ESDB for the stream in which the Approval Request appeared
     state_stream = esdb.read_stream(decision_needed_event.stream_name)
@@ -89,35 +100,44 @@ for decision_needed_event in catchup_subscription:
     
     # Create a placeholder for the Underwriter's decision
     _decision_event_type = ''
+    _in_approver_name = ''
+    _in_approve_deny = ''
 
     # Display our read model for the Underwriter to make a decision
     print("Underwriting needed:")
     for _state_key,_state_value in _state.items():
         print("  " + _state_key + ": " + str(_state_value))
     
-    # Request the decision from the Underwriter as input from the keyboard
-    keyboard_input = input("\n  NWould you like to approve this loan (Y/N)? ")
+    if config.AUTOMATED_UNDERWRITING:
+        _in_approver_name = random.choice(config.UNDERWRITING_USERS)
+        _in_approve_deny = random.choice(config.UNDERWRITING_ANSWERS)
+    else:
+        # Request the decision from the Underwriter as input from the keyboard
+        _in_approver_name = input("\n  What is the approver's name? ")
+        _in_approve_deny = input("\n  NWould " + _in_approver_name + " like to approve this loan (Y/N)? ")
 
     # If the Underwrter gives us a case-insensitive Y for yes
-    if keyboard_input in ("Y","y"):
+    if _in_approve_deny in ("Y","y"):
         # Manually approve the Loan Request by setting the event type
         _decision_event_type = config.EVENT_TYPE_LOAN_MANUAL_APPROVED
     else:
         # Manually decline the Loan Request by setting the event type
         _decision_event_type = config.EVENT_TYPE_LOAN_MANUAL_DENIED
 
+    _ts = str(datetime.datetime.now())
+
     # Create a dictionary holding the LoanRequestID upon which the Underwriter acted
-    _decision_event_data = {"LoanRequestID": _state.get("LoanRequestID")}
+    _decision_event_data = {"LoanRequestID": _state.get("LoanRequestID"), "LoanManualDecisionTimestamp": _ts, "ApproverName": _in_approver_name}
+    _decision_event_metadata = {"$correlationId": _decision_needed_metadata.get("$correlationId"), "$causationId": str(decision_needed_event.id), "transactionTimestamp": _ts}
+    
     # Create a new event for the Underwriting decision
-    decision_event = NewEvent(type=_decision_event_type, data=bytes(json.dumps(_decision_event_data), 'utf-8'))
+    decision_event = NewEvent(type=_decision_event_type, metadata=bytes(json.dumps(_decision_event_metadata), 'utf-8'), data=bytes(json.dumps(_decision_event_data), 'utf-8'))
     
     if config.DEBUG:
         print('  Processing loan decision - ' + _decision_event_type + ': ' + str(_decision_event_data) + '\n')
     else:
         print('  Processing loan decision - ' + _decision_event_type + '\n')
     
-    # Get the commit version to use for appending the decision event
-    COMMIT_VERSION = esdb.get_current_version(stream_name=decision_needed_event.stream_name)
     # Append the decision event
     CURRENT_POSITION = esdb.append_to_stream(stream_name=decision_needed_event.stream_name, current_version=COMMIT_VERSION, events=[decision_event])
 
@@ -130,3 +150,5 @@ for decision_needed_event in catchup_subscription:
     if config.DEBUG:
         print('  Checkpoint: ' + str(decision_needed_event.link.stream_position) + '\n')
 
+    # Introduce some delay
+    time.sleep(config.CLIENT_POST_WORK_DELAY)
