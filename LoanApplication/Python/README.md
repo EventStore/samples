@@ -48,16 +48,16 @@ python3 CreditCheck.py
 python3 LoanRequestor-testCases.py
 ```
 
-The last command, `LoanRequestor-testCases.py`, will inject some test loan requests into the system. You can instead use the GUI to create and monitor loan request status by calling
+The last command, `LoanRequestor-testCases.py`, will inject some test loan requests into the system. You can instead use the command-line injector to create and append loan requests:
 
 ```
-python LoanRequestor.py
+python LoanRequestor-commandLine.py
 ```
 
 Or:
 
 ```
-python3 LoanRequestor.py
+python3 LoanRequestor-commandLine.py
 ```
 
 Check out our QuickStart video series on YouTube to see how everything works
