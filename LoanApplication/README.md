@@ -31,85 +31,45 @@ You must adhere to some Kurrent Cloud requirements to access and use the sample 
 
 
 
-* 
-
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "Internet connectivity"). Did you generate a TOC with blue links? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[Internet connectivity](#heading=h.xt8exc6orhkx) (See: Verifying Connectivity below)
-* 
-
-<p id="gdcalert2" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "Client Connection URL"). Did you generate a TOC with blue links? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert3">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[Client Connection URL](#heading=h.ujp7k68muxnn)  (See: Accessing your Client URL below)
+* [Internet connectivity](#heading=h.xt8exc6orhkx) (See: Verifying Connectivity below)
+* [Client Connection URL](#heading=h.ujp7k68muxnn)  (See: Accessing your Client URL below)
 * Security mode where Mutual TLS (mTLS) is disabled
 * The cluster you are using has System and User Projections enabled
     * If you didn't do so initially, please create a new cluster using this option.  (see image below)
 
 
-
-<p id="gdcalert3" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert4">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image1.png "image_tooltip")
-
 
 
 ## Verifying Connectivity
 
 You will log into the **KurrentDB Web UI **to verify connectivity. 
 
-
-
 1. Click the Addresses panel on the **Kurrent Cloud Console UI** **Clusters** page.
 2. The URL in the UI row is your unique KurrentDB Web UI address.
 3. Select the link.
 
 
-
-<p id="gdcalert4" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image2.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert5">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image2.png "image_tooltip")
 
 
-After you select the link, the KurrentDB login screen should appear. If you reach this successfully, continue to step 4. If your web browser displays a **403: Forbidden** message, please skip to the “**
-
-<p id="gdcalert5" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "Adding your IP Address to the IP Access List"). Did you generate a TOC with blue links? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert6">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[Adding your IP Address to the IP Access List](#heading=h.hfjipe2ehurh)**” section.  Once the actions required are complete, return to this section and repeat steps 1-3.
-
-
-
-<p id="gdcalert6" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image3.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert7">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
+After you select the link, the KurrentDB login screen should appear. If you reach this successfully, continue to step 4. If your web browser displays a **403: Forbidden** message, please skip to the “**[Adding your IP Address to the IP Access List](#heading=h.hfjipe2ehurh)**” section.  Once the actions required are complete, return to this section and repeat steps 1-3.
 
 
 ![alt_text](images/image3.png "image_tooltip")
 
 
-
-
 4. Use your Admin Credentials to log in to the **KurrentDB Web UI**. Access them on the **Kurrent Cloud Console UI **by clicking the **Security** tab, and then choosing **Admin Credentials**. Your default username is **admin**. You can copy your default password using the **Copy** button to the right of the **Password** box.
 
 
-
-<p id="gdcalert7" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image4.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert8">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image4.png "image_tooltip")
-
-
 
 
 5. Return to the KurrentDB login screen.
 6. Enter **admin** as your Username, paste your password in the Password field, and click **Sign In**. The **Dashboard** page will be displayed.
 
 
-
-<p id="gdcalert8" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image5.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert9">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image5.png "image_tooltip")
-
 
 
 ## Adding your IP Address to the IP Access List
@@ -123,80 +83,40 @@ If you receive a **403: Forbidden** message in your web browser, please ensure y
 3. Then select the link for your IP Access List (in the image below, this is “Cloud Tutorial Access List.”
 
 
-
-<p id="gdcalert9" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image6.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert10">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image6.png "image_tooltip")
-
-
 
 
 4. Verify that your IP address is listed in the **Addresses** section of your IP Access List.
 
 
-
-<p id="gdcalert10" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image7.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert11">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image7.png "image_tooltip")
-
-
 
 
 5. Click **Edit &lt;Your Access List Name>** if your IP address is not listed.
 
 
-
-<p id="gdcalert11" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image8.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert12">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image8.png "image_tooltip")
-
-
 
 
 6. Select **Add My IP Address** to have the console determine and add your IP address to the list, or **Add Address** to enter your IP manually. When finished, click **Update IP access list**. 
 
 
-
-<p id="gdcalert12" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image9.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert13">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image9.png "image_tooltip")
-
-
 
 
 7. If you receive a Warning, confirm your IP access list update.
 
 
-
-<p id="gdcalert13" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image10.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert14">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image10.png "image_tooltip")
- 
-
 
 
 8. Once your IP has been successfully added to your environment, select **Details**.  The **Status** of the IP Access List should be **Active.**
 
 
-
-<p id="gdcalert14" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image11.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert15">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image11.png "image_tooltip")
 
 
-
-
-9. Return to the 
-
-<p id="gdcalert15" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "Verifying Connectivity"). Did you generate a TOC with blue links? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert16">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[Verifying Connectivity](#heading=h.xt8exc6orhkx) section and repeat steps 1-3 to access the KurrentDB Web UI login screen. 
+9. Return to the [Verifying Connectivity](#heading=h.xt8exc6orhkx) section and repeat steps 1-3 to access the KurrentDB Web UI login screen. 
 
 
 ## Accessing your Client URL
@@ -208,37 +128,19 @@ To operate the demo application, you’ll need your **Client URL**.
 1. In the **Kurrent Cloud Console UI**, click the **Connect to &lt;ClusterName>** button.
 
 
-
-<p id="gdcalert16" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image12.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert17">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image12.png "image_tooltip")
-
-
 
 
 2. The **Connection** pop-up will appear.
 
 
-
-<p id="gdcalert17" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image13.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert18">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image13.png "image_tooltip")
-
-
 
 
 3. Scroll down and select **Python** from the list of clients. The **Python** connection details will appear.  
 
 
-
-<p id="gdcalert18" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image14.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert19">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image14.png "image_tooltip")
-
-
 
 
 4. Click the **Copy** button to the right of the esdb+discover... Client URL. It should look similar to this:
