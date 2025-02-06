@@ -194,7 +194,7 @@ The sample application will implement a basic loan application processing system
 
 
 1. **Seeder**: The **seeder** or **Loan Request** application injects mock **LoanRequested** events using ShadowTraffic. These events provide all the details one would expect to give to a financial institution when applying for a loan, such as a mortgage, credit card, student loan, etc.
-2. **Creditcheck**: The **creditcheck** or **Credit Check **application listens for **LoanRequested** events and performs a mock credit score check. For each loan request, a credit score is appended to the stream as a new **CreditChecked **event.
+2. **Creditcheck**: The **creditcheck** or **Credit Check** application listens for **LoanRequested** events and performs a mock credit score check. For each loan request, a credit score is appended to the stream as a new **CreditChecked** event.
 3. **Decider**: The **decider** or **Loan Decider** application listens for **CreditChecked** events and makes an automated decision about whether to approve or deny the loan based on the credit score (appending **LoanAutomaticallyApproved** and **LoanAutomaticallyDenied** events) or to refer the loan for human review (appending **LoanApprovalNeeded** events).
 4. **Underwriter**: The **underwriter** or **Underwriting** application listens for **LoanApprovalNeeded** events and presents a **Read Model** to a human, showing the application details and allowing a manual loan approval or denial. For our example, we will automate this process, randomly choosing an **Approver Name**, and randomly choosing to append a **LoanManuallyApproved** or **LoanManuallyDenied** event.
 
@@ -231,8 +231,8 @@ Set the DB_URL environment variable for your platform by entering the following 
 
 
 
-* Mac or Linux: export DB_URL=&lt;Client URL>
-* Windows: set DB_URL=&lt;Client URL>
+* Mac or Linux: `export DB_URL=&lt;Client URL>`
+* Windows: `set DB_URL=&lt;Client URL>`
 
 Test that the variable is set correctly:
 
@@ -308,28 +308,16 @@ NOTE: The above output is an example. Your output will vary, but all four proces
 Return to the **KurrentDB Web UI** in your web browser. Navigate to the **Stream Browser** tab. Note that streams of **loanRequest-&lt;eventID>** are being created in the **Recently Created Streams** table:
 
 
-
-<p id="gdcalert20" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image16.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert21">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image16.png "image_tooltip")
 
 
 **Clicking a stream name** shows the events in that stream.
 
 
-
-<p id="gdcalert21" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image17.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert22">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
 ![alt_text](images/image17.png "image_tooltip")
 
 
 Clicking **JSON** next to an event displays the complete event information.
-
-
-
-<p id="gdcalert22" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image18.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert23">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
 
 
 ![alt_text](images/image18.png "image_tooltip")
