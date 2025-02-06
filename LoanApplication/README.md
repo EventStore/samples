@@ -43,7 +43,7 @@ You must adhere to some Kurrent Cloud requirements to access and use the sample 
 
 ## Verifying Connectivity
 
-You will log into the **KurrentDB Web UI **to verify connectivity. 
+You will log into the **KurrentDB Web UI** to verify connectivity. 
 
 1. Click the Addresses panel on the **Kurrent Cloud Console UI** **Clusters** page.
 2. The URL in the UI row is your unique KurrentDB Web UI address.
@@ -59,7 +59,7 @@ After you select the link, the KurrentDB login screen should appear. If you reac
 ![alt_text](images/image3.png "image_tooltip")
 
 
-4. Use your Admin Credentials to log in to the **KurrentDB Web UI**. Access them on the **Kurrent Cloud Console UI **by clicking the **Security** tab, and then choosing **Admin Credentials**. Your default username is **admin**. You can copy your default password using the **Copy** button to the right of the **Password** box.
+4. Use your Admin Credentials to log in to the **KurrentDB Web UI**. Access them on the **Kurrent Cloud Console UI** by clicking the **Security** tab, and then choosing **Admin Credentials**. Your default username is **admin**. You can copy your default password using the **Copy** button to the right of the **Password** box.
 
 
 ![alt_text](images/image4.png "image_tooltip")
@@ -78,8 +78,8 @@ If you receive a **403: Forbidden** message in your web browser, please ensure y
 
 
 
-1. Navigate to the **Security **tab in your **Kurrent Cloud Console UI.**
-2. Select **IP Access List **from the Security menu.
+1. Navigate to the **Security** tab in your **Kurrent Cloud Console UI.**
+2. Select **IP Access List** from the Security menu.
 3. Then select the link for your IP Access List (in the image below, this is “Cloud Tutorial Access List.”
 
 
@@ -146,8 +146,8 @@ To operate the demo application, you’ll need your **Client URL**.
 4. Click the **Copy** button to the right of the esdb+discover... Client URL. It should look similar to this:
 
     ```
-esdb+discover://admin:1e6628e34efe480a9e395acbafa8613c@kurrentdb.cud2g7cgdub7p6skf1dg.cucin94gdub7p6skf0i0.sites.dev.eventstore.cloud:2113
-```
+    esdb+discover://admin:1e6628e34efe480a9e395acbafa8613c@kurrentdb.cud2g7cgdub7p6skf1dg.cucin94gdub7p6skf0i0.sites.dev.eventstore.cloud:2113
+    ```
 
 
 5. Save this URL for future steps. 
@@ -184,9 +184,6 @@ Congratulations!  If you have reached this point, you have successfully set up K
 
 ## Overview of Loans Application
 
-
-
-<p id="gdcalert19" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image15.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert20">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
 
 
 ![alt_text](images/image15.png "image_tooltip")
